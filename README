@@ -2,18 +2,23 @@ jUIRTE
 
 A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI
 
-Featuring:
-Buttons & Buttonsets
-Expandable
-Cross-browser
-Very,very,very,very SMALL!
-To-Do
-Fix scroll bars in IE
-Fix items showing below textarea being hidden because no real wrapper
-Hook up all other buttons - ie links/unlink, colors etc
-Add spacers that seperate buttonsets
-Add menu rows
-Example
+== Featuring: ==
+* Buttons & Buttonsets
+* Expandable
+* Cross-browser
+* Very,very,very,very SMALL!
+
+== To-Do ==
+* Fix scroll bars in IE
+* Fix items showing below textarea being hidden because no real wrapper
+* Hook up all other buttons - ie links/unlink, colors etc
+* Add spacers that seperate buttonsets
+* Add menu rows
+
+== Example == 
 $(document).ready(function(){ 
-$("#myEditor").wysiwyg();
+ $("#myEditor").wysiwyg();
 });
+
+== License ==
+LGPL - use it how you want!
