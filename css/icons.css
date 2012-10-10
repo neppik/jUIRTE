@@ -9,3 +9,13 @@
 .ui-button .ui-icon.ui-wysiwyg-icon-full { background-position: -442px 0; background-image: url('../images/icons.png'); }
 .ui-button .ui-icon.ui-wysiwyg-icon-left { background-position: -462px 0; background-image: url('../images/icons.png'); }
 .ui-button .ui-icon.ui-wysiwyg-icon-right { background-position: -482px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-link { background-position: -502px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-unlink { background-position: -642px 0; background-image: url('../images/icons.png'); }
+
+.ui-button .ui-icon.ui-wysiwyg-icon-indent { background-position: -402px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-outdent { background-position: -542px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-superscript { background-position: -622px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-subscript { background-position: -602px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-image { background-position: -382px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-removeformat { background-position: -582px 0; background-image: url('../images/icons.png'); }
+

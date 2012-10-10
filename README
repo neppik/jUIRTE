@@ -12,13 +12,11 @@ A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI
 * Fix scroll bars in IE
 * Fix items showing below textarea being hidden because no real wrapper
 * Hook up all other buttons - ie links/unlink, colors etc
-* Add spacers that seperate buttonsets
-* Add menu rows
 
 == Example == 
-$(document).ready(function(){ 
+```$(document).ready(function(){ 
  $("#myEditor").wysiwyg();
-});
+});```
 
 == License ==
 LGPL - use it how you want!
