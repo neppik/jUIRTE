@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+<script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
+<script src="js/jquery.juirte.js"></script>
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="css/icons.css" />
+<link rel="stylesheet" type="text/css" href="css/jquery.juirte.css" />
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#myEditor").wysiwyg();
+});
+</script>
+<style type="text/css">
+	body{ font-family: arial, helvetica; font-size: 10pt}
+	.code{ margin: 10px; border: 1px solid grey; width: 300px}
+</style>
+</head>
+<body>
+
+<h3>jUIRTE</h3>
+<h4>A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI</h4>
+<strong>Featuring:</strong>
+<ul>
+	<li>Buttons &amp; Buttonsets</li>
+	<li>Expandable</li>
+	<li>Cross-browser</li>
+	<li>Very,very,very,very SMALL!</li>
+</ul>
+<strong>To-Do</strong>
+<ul>
+	<li>Fix scroll bars in IE</li>
+	<li>Fix items showing below textarea being hidden because no real wrapper</li>
+	<li>Hook up all other buttons - ie links/unlink, colors etc</li>
+	<li>Add spacers that seperate buttonsets</li>
+	<li>Add menu rows</li>
+	
+</ul>
+
+
+<strong>Example</strong>
+<div class="code">
+$(document).ready(function(){
+	<Br>
+	<dd>$("#myEditor").wysiwyg();</dd>
+});
+</div>
+<textarea id="myEditor" style="width: 300px; height: 120px;">default value</textarea>
+
+
+
+</body>
+</html>
