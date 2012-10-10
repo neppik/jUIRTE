@@ -44,7 +44,7 @@ fontSize
 				height : settings.height
 			}
 		}).resizable();
-       $this.before(containerDiv); 
+       $this.after(containerDiv); 
 
        var editor = $("<iframe/>",{
    			css : { height: '100%', width: '100%' },
@@ -57,27 +57,34 @@ fontSize
 		editor.contentWindow.document.close();
 		editor.contentWindow.document.designMode="on";
 
-		$('.'+_id+'-wysiwyg-content').contents().find('body').bind("keyup keydown keypress focus blur", function(e) {
+		// update original textarea when contents change
+		$('.'+_id+'-wysiwyg-content').contents().bind("keyup keydown keypress focus blur", function() {
 			$('#'+_id).val($('.ui-wysiwyg-content').contents().find('body').html());
 		})
 
-		$('.'+_id+'-wysiwyg-content').contents().find('body').on('click', 'u,b,i', 
-			function(){
-				var _tag=$(this).get(0).tagName;
-				console.log(_tag);
-				//$('#wysiwyg-btn-'+_tag).addClass(' ui-state-hover ui-state-focus');
+
+		// set buttons to focus/hover state when elements are selected
+		$('.'+_id+'-wysiwyg-content').contents().click(
+			function(event){
+				$.each(settings.buttons,function(i,v){ $('.ui-wysiwyg-btn-'+v).removeClass(' ui-state-hover ui-state-focus'); });
+
+				var elm=event.target ? event.target : event.srcElement;
+				do {
+					if ( elm.nodeType != 1 ) break;
+					var _tag=elm.tagName.toUpperCase();
+					if( $('#ui-wysiwyg-btn-'+_tag))$('#ui-wysiwyg-btn-'+_tag).addClass(' ui-state-hover ui-state-focus');
+				} while ((elm = elm.parentNode));
 			}
 		);
+	
 
-		
-
-
+		// append menu container to overall container
 		var wysiwyg_menu = $("<div/>",{
 			"class" : "ui-widget ui-widget-content ui-widget-header ui-corner-bottom  ui-wysiwyg-menu",
 			css : { width : '100%' }
 		}).appendTo(containerDiv);
 
-
+		// append button container to menu container
 		var buttonPane = $("<div/>",{
 			"class" : "ui-wysiwyg-menu-wrap",
 			css : {
@@ -88,9 +95,11 @@ fontSize
 		//containerDiv.append($('<div/>', { 'class': 'ui-helper-clearfix', css: { 'height': '100px', 'border': '1px solid blue'}}));
 
 
+		// create button wrappers for rows/spacers
 		var _i=0;
 		var _buttonwrap=$('<div/>', {class: 'ui-wysiwyg-set'+_i+' ui-wysiwyg-left'});
 
+		// loop buttons and insert to containers
 		$.each(settings.buttons,function(i,v){
 			var _options=fnGetButton(v);
 			if(v == 'spacer' || v == 'row'){
@@ -103,8 +112,8 @@ fontSize
 				$("<a/>",{
 					href : "#",
 					text : _options.text,
-					class : 'ui-wysiwyg-btn',
-					id: 'wysiwyg-btn-'+_options.tag,
+					class : 'ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					id: 'ui-wysiwyg-btn-'+_options.tag,
 					data : {
 						commandName : v,
 						commandValue: _options.value
