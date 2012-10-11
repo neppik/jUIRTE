@@ -68,6 +68,11 @@ fontSize
 
 
 		function fnSetButtons(event){
+			// reset dropdowns
+			$('.ui-wysiwyg-dd-fntbtn span').text('Font');
+			$('.ui-wysiwyg-dd-btn span').text('Paragraph');
+
+
 			$.each(settings.buttons,function(i,v){ $('.ui-wysiwyg-btn-'+v).removeClass('ui-state-hover ui-state-focus'); });
 			var elm=event.target ? event.target : event.srcElement;
 			do {
@@ -75,12 +80,9 @@ fontSize
 				var _tag=elm.tagName.toUpperCase();
 				if(_tag == 'BODY' || _tag == 'HTML') break;
 //console.log(_tag);
+
 				// set the heading drop down
 				switch(_tag){
-					case 'FONT':
-						$('.ui-wysiwyg-dd-fntbtn span').text(elm.face);
-						console.log(elm.face);
-					break;
 					case 'ADDRESS':
 						$('.ui-wysiwyg-dd-btn span').text('Address');
 					break;
@@ -102,12 +104,14 @@ fontSize
 					case 'H6':
 						$('.ui-wysiwyg-dd-btn span').text('Heading 6');
 					break;
-					default:
-						$('.ui-wysiwyg-dd-btn span').text('Paragraph');
-						$('.ui-wysiwyg-dd-fntbtn span').text('Font');
-
 				}
 
+
+				if(_tag == 'FONT'){
+					$('.ui-wysiwyg-dd-fntbtn span').text(elm.face);
+				}
+
+				// select justify items
 				if(_tag == 'DIV'){
 					switch(elm.getAttribute('style')){
 						case 'text-align: right;':
@@ -138,9 +142,7 @@ fontSize
 		// append button container to menu container
 		var buttonPane = $("<div/>",{
 			"class" : "ui-wysiwyg-menu-wrap",
-			css : {
-				width : '100%'
-			}
+			css : { width : '100%' }
 		}).appendTo(wysiwyg_menu);
 
 		//containerDiv.append($('<div/>', { 'class': 'ui-helper-clearfix', css: { 'height': '100px', 'border': '1px solid blue'}}));
@@ -190,6 +192,7 @@ fontSize
 
 				var _headermenu=$('<ul/>').html('');
 
+				//TO-DO: make from array
 				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Paragraph');fnRunCommand('formatBlock', '<p>')}}).html('Paragraph').appendTo(_headermenu);
 				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Address');fnRunCommand('formatBlock', '<address>')}}).html('<address>Address</address>').appendTo(_headermenu);
 				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 1');fnRunCommand('formatBlock', '<h1>')}}).html('<h1>Heading 1</h1>').appendTo(_headermenu);
@@ -210,11 +213,11 @@ fontSize
 				$("<a/>",{
 					href : "#",
 					text : _options.text,
-					class : 'ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					class : 'ui-wysiwyg-btn ui-wysiwyg-btn-'+v+' '+_options.class,
 					id: 'ui-wysiwyg-btn-'+_options.tag,
 					data : {
 						commandName : v,
-						commandValue: _options.value
+						class : _options.class
 					},
 					click : fnExecCommand 
 				}).button(_options.icon).appendTo(_buttonwrap);
@@ -225,7 +228,7 @@ fontSize
 		buttonPane.append($('<div/>', { class: 'ui-helper-clearfix'}));
 		
 				$(document).bind('click', function (e) {
-					// hack
+					// to-do: fix tihs up better to hide menus
 					if (e.target.className != 'ui-button-text') {
 						$('.ui-wysiwyg-dropdown').slideUp();
 					}
@@ -240,154 +243,154 @@ fontSize
 			switch(type){
 				case 'fonts':
 					_result.text='Font';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { secondary: "ui-icon-triangle-1-s"}};
 					_result.tag='FONT';
 				break;
 
 				case 'heading':
 					_result.text='Paragraph';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { secondary: "ui-icon-triangle-1-s"}};
 					_result.tag='H';
 				break;
 
 				case 'createlink':
 					_result.text='Link';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-link"}, text: false};
-					_result.tag='A';
+					_result.tag='';
 				break;
 
 				case 'unlink':
 					_result.text='Remove Link';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-unlink"}, text: false};
-					_result.tag='';
+					_result.tag='A';
 				break;
 
 				case 'italic':
 					_result.text='Italic';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-italic"}, text: false};
 					_result.tag='I';
 				break;
 
 				case 'bold':
 					_result.text='Bold';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-bold"}, text: false};
 					_result.tag='B';
 				break;
 
 				case 'underline':
 					_result.text='Underline';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-underline"}, text: false};
 					_result.tag='U';
 				break;
 
 				case 'strikeThrough':
 					_result.text='Strike';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-strike"}, text: false};
 					_result.tag='STRIKE';
 				break;
 
 				case 'insertHorizontalRule':
 					_result.text='Horizontal Rule';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-hr"}, text: false};
 					_result.tag='HR';
 				break;
 
 				case 'insertOrderedList':
 					_result.text='Ordered List';
-					_result.value='';
+					_result.class='ui-wysiwyg-list';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-ol"}, text: false};
 					_result.tag='OL';
 				break;
 
 				case 'insertUnorderedList':
 					_result.text='Unordered List';
-					_result.value='';
+					_result.class='ui-wysiwyg-list';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-ul"}, text: false};
 					_result.tag='UL';
 				break;
 
 				case 'justifyCenter':
 					_result.text='Center';
-					_result.value='';
+					_result.class='ui-wysiwyg-justify';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-center"}, text: false};
 					_result.tag='CENTER';
 				break;
 
 				case 'justifyLeft':
 					_result.text='Left';
-					_result.value='';
+					_result.class='ui-wysiwyg-justify';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-left"}, text: false};
 					_result.tag='';
 				break;
 				
 				case 'justifyFull':
 					_result.text='Full';
-					_result.value='';
+					_result.class='ui-wysiwyg-justify';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-full"}, text: false};
 					_result.tag='';
 				break;	
 				
 				case 'justifyRight':
 					_result.text='Right';
-					_result.value='';
+					_result.class='ui-wysiwyg-justify';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-right"}, text: false};
 					_result.tag='';
 				break;
 
 				case 'indent':
 					_result.text='Indent';
-					_result.value='';
+					_result.class='ui-wysiwyg-dent';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-indent"}, text: false};
 					_result.tag='BLOCKQUOTE';
 				break;
 
 				case 'outdent':
 					_result.text='Outdent';
-					_result.value='';
+					_result.class='ui-wysiwyg-dent';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-outdent"}, text: false};
 					_result.tag='';
 				break;
 
 				case 'superscript':
 					_result.text='Superscript';
-					_result.value='';
+					_result.class='ui-wysiwyg-script';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-superscript"}, text: false};
-					_result.tag='';
+					_result.tag='SUP';
 				break;
 
 				case 'subscript':
 					_result.text='Subscript';
-					_result.value='';
+					_result.class='ui-wysiwyg-script';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-subscript"}, text: false};
-					_result.tag='';
+					_result.tag='SUB';
 				break;
 
 				case 'insertImage':
 					_result.text='Insert Image';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-image"}, text: false};
 					_result.tag='IMG';
 				break;
 
 				case 'removeFormat':
 					_result.text='Remove Formating';
-					_result.value='';
+					_result.class='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-removeformat"}, text: false};
 					_result.tag='';
 				break;
 
 				default:
 					_result.text=type;
-					_result.value='';
+					_result.class='';
 					_result.icon=null;
 					_result.tag=null;
 			}
@@ -441,8 +444,8 @@ fontSize
 		}
 
 		function fnExecCommand (e) {
-			// to-do: need to check if element should unset other items like, LEFT justify should untoggle all other justifies
-			$(this).toggleClass('ui-state-active ui-state-focus');
+			if($(this).data('class')) $('.'+$(this).data('class')).removeClass('ui-state-active ui-state-focus');
+			if($(this).data('commandName') != 'createlink') $(this).toggleClass('ui-state-active ui-state-focus');
 
 			switch($(this).data('commandName')){
 				case 'createlink':
@@ -453,7 +456,7 @@ fontSize
 				break;
 
 				default:
-					return fnRunCommand($(this).data('commandName'), $(this).data('commandValue'));
+					return fnRunCommand($(this).data('commandName'), '');
 			}
 
 		}
