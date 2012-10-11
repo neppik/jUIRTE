@@ -1,13 +1,35 @@
-.ui-wysiwyg-menu{margin:0px; padding: 0px; margin-top: -4px;  margin-left: -1px; overflow: hidden}
+.ui-wysiwyg-menu{margin:0px; padding: 0px; margin-top: -4px;  margin-left: -1px; overflow: hidden; }
 .ui-wysiwyg-menu-wrap{ margin: 4px; margin-bottom: 0px}
 .ui-wysiwyg .ui-button{ min-width: 30px; font-size: 80% }
 .ui-wysiwyg .ui-button span{ font-size: 80% }
 .ui-wysiwyg-left{ float: left; margin-bottom: 4px}
 .ui-wysiwyg-row{ float: left; clear: left;}
-
 .ui-wysiwyg-dropdown{display: none;margin-left:2px;position:absolute;z-index:2229}
 .ui-wysiwyg-dropdown ul{list-style:none;margin:0;padding:10px}
 .ui-wysiwyg-dropdown ul li{cursor:pointer;padding:2px;text-decoration:underline}
-
 .ui-wysiwyg-dropdown ul li h1, .ui-wysiwyg-dropdown ul li h2, .ui-wysiwyg-dropdown ul li h3, .ui-wysiwyg-dropdown ul li h4, .ui-wysiwyg-dropdown ul li h5, .ui-wysiwyg-dropdown ul li h6 { margin: 0px; padding: 0px}
-.ui-wysiwyg-swatch{ width: 12px; height: 12px; border: 1px solid black}
+.ui-wysiwyg-swatch{ width: 12px; height: 12px; border: 1px solid black; text-decoration: none; display: table}
+.ui-list-wrapper ul { float: left; padding: 0px;}
+.ui-wysiwyg-fontbgcdropdown, .ui-wysiwyg-fontcldropdown{ padding: 4px;}
+/* icons */
+.ui-button .ui-icon.ui-wysiwyg-icon-italic { background-position: -62px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-bold { background-position: -2px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-underline { background-position: -143px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-strike { background-position: -122px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-hr { background-position: -360px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-ol { background-position: -82px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-ul { background-position: -20px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-center { background-position: -422px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-full { background-position: -442px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-left { background-position: -462px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-right { background-position: -482px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-link { background-position: -502px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-unlink { background-position: -642px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-indent { background-position: -402px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-outdent { background-position: -542px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-superscript { background-position: -622px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-subscript { background-position: -602px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-image { background-position: -382px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-removeformat { background-position: -582px 0; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-bgc { background-position: -760px 2px; background-image: url('../images/icons.png'); }
+.ui-button .ui-icon.ui-wysiwyg-icon-fontc { background-position: -962px -20px; background-image: url('../images/icons.png'); }

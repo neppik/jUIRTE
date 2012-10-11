@@ -1,4 +1,4 @@
-$.fn.wysiwyg = function(options){
+$.fn.juirte = function(options){
 	// based on the example @ http://stackoverflow.com/questions/5281438/how-to-create-a-text-editor-in-jquery
 	// icons from http://www.cirkuit.net/projects/tinymce/cirkuitSkin/
 	var settings = $.extend({
@@ -6,7 +6,7 @@ $.fn.wysiwyg = function(options){
 		lng_insertimage : 'Insert Image',
 		width : "400",
 		height : "200px",
-		colors : ['#cccccc', '#c3c3c3', '#dddddd'],
+		colors : ['#FFFFFF', '#C0C0C0', '#808080', '#000000', '#FF0000', '#800000', '#FFFF00', '#808000', '#00FF00', '#008000', '#00FFFF', '#008080', '#0000FF', '#000080', '#FF00FF', '#800080'],
 		fontsize : ['1','2','3','4','5','6','7'],
 		fonts : ["Arial","Comic Sans MS","Courier New","Monotype Corsiva","Tahoma","Times"],
 		buttons: [
@@ -34,12 +34,12 @@ $.fn.wysiwyg = function(options){
 			class: 'ui-wysiwyg ui-widget ui-widget-content ui-corner-top ',
 			css : { width : settings.width , height : settings.height }
 		}).resizable();
-       $this.after(_container); 
+       $this.before(_container); 
 
 		// write the iframe to be editable
 		var editor = $("<iframe/>",{
 			css : { height: '100%', width: '100%' },
-			frameborder : "0",
+			frameborder : '0', marginwidth: '0', marginheight: '0',
 			class: _id+'-wysiwyg-content ui-wysiwyg-content ',
 		}).appendTo(_container).get(0);
 
@@ -90,18 +90,25 @@ $.fn.wysiwyg = function(options){
 					text : _options.text,
 					class : 'ui-wysiwyg-dd-fntbgcbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					id: 'ui-wysiwyg-fntbtn-'+_options.tag,
-					click : function(){$(this).parent().find('.ui-wysiwyg-fontbgcdropdown').slideToggle('fast')}
+					click : function(){
+						$('.ui-wysiwyg-fontbgcdropdown').slideToggle('fast');
+						var _pos=$(this).offset();
+						_pos.top=_pos.top+23;
+						$('.ui-wysiwyg-fontbgcdropdown').offset(_pos);
+					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _fontmenu=$('<ul/>').html('');
 				$.each(settings.colors,function(i,v){
-					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', v);fnRunCommand('backColor', v)}}).html('<div style="background:'+v+'" class="ui-wysiwyg-swatch"></div>').appendTo(_fontmenu);
+					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', v);fnRunCommand('backColor', v)}}).html('<a href="#" style="background:'+v+'" class="ui-wysiwyg-swatch" title="'+v+'"></a>').appendTo(_fontmenu);
 				});
 
 				$('<div/>',{
 					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontbgcdropdown ui-widget ui-widget-content ui-corner-all',
 					style: ' margin: 0px'
-				}).append(_fontmenu).appendTo(_buttonwrap);
+				}).append(_fontmenu).appendTo(_container);
+				_fontmenu.column_list({ columns: 4 });
+
 
 			} else if(v == 'forecolor'){
 				var _fontlink=$("<a/>",{
@@ -109,18 +116,24 @@ $.fn.wysiwyg = function(options){
 					text : _options.text,
 					class : 'ui-wysiwyg-dd-fntclbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					id: 'ui-wysiwyg-fntbtn-'+_options.tag,
-					click : function(){$(this).parent().find('.ui-wysiwyg-fontcldropdown').slideToggle('fast')}
+					click : function(){
+						$('.ui-wysiwyg-fontcldropdown').slideToggle('fast');
+						var _pos=$(this).offset();
+						_pos.top=_pos.top+23;
+						$('.ui-wysiwyg-fontcldropdown').offset(_pos);
+					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _fontmenu=$('<ul/>').html('');
 				$.each(settings.colors,function(i,v){
-					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntclbtn span').css('background-color', v);fnRunCommand('forecolor', v)}}).html('<div style="background:'+v+'" class="ui-wysiwyg-swatch"></div>').appendTo(_fontmenu);
+					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntclbtn span').css('background-color', v);fnRunCommand('forecolor', v)}}).html('<a href="#" style="background:'+v+'" class="ui-wysiwyg-swatch" title="'+v+'"></a>').appendTo(_fontmenu);
 				});
 
 				$('<div/>',{
 					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontcldropdown ui-widget ui-widget-content ui-corner-all',
 					style: ' margin: 0px'
-				}).append(_fontmenu).appendTo(_buttonwrap);
+				}).append(_fontmenu).appendTo(_container);
+				_fontmenu.column_list({ columns: 4 });
 
 
 			} else if(v == 'fontSize'){
@@ -129,50 +142,66 @@ $.fn.wysiwyg = function(options){
 					text : _options.text,
 					class : 'ui-wysiwyg-dd-fntszbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					id: 'ui-wysiwyg-fntbtn-'+_options.tag,
-					click : function(){$(this).parent().find('.ui-wysiwyg-fontszdropdown').slideToggle('fast')}
+					click : function(){
+						$('.ui-wysiwyg-fontszdropdown').slideToggle('fast');
+						var _pos=$(this).offset();
+						_pos.top=_pos.top+23;
+						$('.ui-wysiwyg-fontszdropdown').offset(_pos);
+
+					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _fontmenu=$('<ul/>').html('');
 				$.each(settings.fontsize,function(i,v){
-					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntszbtn span').text(v);fnRunCommand('fontSize', v)}}).html('<font size="'+v+'">'+v+'</font>').appendTo(_fontmenu);
+					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntszbtn span').text(v);fnRunCommand('fontSize', v)}}).html('<a href="#"><font size="'+v+'">'+v+'</font></a>').appendTo(_fontmenu);
 				});
 
 				$('<div/>',{
 					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontszdropdown ui-widget ui-widget-content ui-corner-all',
 					style: ' margin: 0px'
-				}).append(_fontmenu).appendTo(_buttonwrap);
+				}).append(_fontmenu).appendTo(_container);
 			} else if(v == 'fonts'){
 				var _fontlink=$("<a/>",{
 					href : "#",
 					text : _options.text,
 					class : 'ui-wysiwyg-dd-fntbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					id: 'ui-wysiwyg-fntbtn-'+_options.tag,
-					click : function(){$(this).parent().find('.ui-wysiwyg-fontdropdown').slideToggle('fast')}
+					click : function(){
+						$('.ui-wysiwyg-fontdropdown').slideToggle('fast');
+						var _pos=$(this).offset();
+						_pos.top=_pos.top+23;
+						$('.ui-wysiwyg-fontdropdown').offset(_pos);
+					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _fontmenu=$('<ul/>').html('');
 				$.each(settings.fonts,function(i,v){
-					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntbtn span').text(v);fnRunCommand('FontName', v)}}).html('<font face="'+v+'">'+v+'</font>').appendTo(_fontmenu);
+					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntbtn span').text(v);fnRunCommand('FontName', v)}}).html('<a href="#"><font face="'+v+'">'+v+'</font></a>').appendTo(_fontmenu);
 				});
 
 				$('<div/>',{
 					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontdropdown ui-widget ui-widget-content ui-corner-all',
 					style: ' margin: 0px'
-				}).append(_fontmenu).appendTo(_buttonwrap);
+				}).append(_fontmenu).appendTo(_container);
 			} else if(v == 'heading'){
 				var _headmenu=$("<a/>",{
 					href : "#",
 					text : _options.text,
 					class : 'ui-wysiwyg-dd-btn ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					id: 'ui-wysiwyg-btn-'+_options.tag,
-					click : function(){$(this).parent().find('.ui-wysiwyg-hddropdown').slideToggle('fast')}
+					click : function(){
+						$('.ui-wysiwyg-hddropdown').slideToggle('fast')
+						var _pos=$(this).offset();
+						_pos.top=_pos.top+23;
+						$('.ui-wysiwyg-hddropdown').offset(_pos);
+					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _headermenu=$('<ul/>').html('');
 
 				//TO-DO: make from array
-				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Paragraph');fnRunCommand('formatBlock', '<p>')}}).html('Paragraph').appendTo(_headermenu);
-				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Address');fnRunCommand('formatBlock', '<address>')}}).html('<address>Address</address>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Paragraph');fnRunCommand('formatBlock', '<p>')}}).html('<a href="#">Paragraph</a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Address');fnRunCommand('formatBlock', '<address>')}}).html('<a href="#"><address>Address</address></a>').appendTo(_headermenu);
 				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 1');fnRunCommand('formatBlock', '<h1>')}}).html('<h1>Heading 1</h1>').appendTo(_headermenu);
 				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 2');fnRunCommand('formatBlock', '<h2>')}}).html('<h2>Heading 2</h2>').appendTo(_headermenu);
 				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 3');fnRunCommand('formatBlock', '<h3>')}}).html('<h3>Heading 3</h3>').appendTo(_headermenu);
@@ -183,7 +212,7 @@ $.fn.wysiwyg = function(options){
 				$('<div/>',{
 					class : 'ui-wysiwyg-dropdown ui-wysiwyg-hddropdown ui-widget ui-widget-content ui-corner-all',
 					style: 'font-size: 60%; margin: 0px'
-				}).append(_headermenu).appendTo(_buttonwrap);
+				}).append(_headermenu).appendTo(_container);
 			} else {
 				$("<a/>",{
 					href : "#",
@@ -202,7 +231,11 @@ $.fn.wysiwyg = function(options){
 
 		// add a clear fix to clean up floating items
 		_button_panel.append($('<div/>', { class: 'ui-helper-clearfix'}));
-		
+	
+		// fix lack of height from menu so items below show properly after the editor
+		$('<div/>').height(wysiwyg_menu.height()).insertAfter(_container);
+
+
 		// hide any drop down when clicked
 		$(document).bind('click', function (e) {
 			if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-btn'))$('.ui-wysiwyg-hddropdown').slideUp();
@@ -286,7 +319,7 @@ $.fn.wysiwyg = function(options){
 
 				// set background color
 				if($(elm).css('background-color')){
-					$('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', $(elm).css('backgroundColor'));
+					if($(elm).css('backgroundColor') != 'transparent') $('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', $(elm).css('backgroundColor'));
 				}
 
 				// set the justify items
@@ -583,3 +616,42 @@ $.cssHooks.backgroundColor = {
         }
     }
 }
+
+ $.fn.column_list = function(options) {
+	var settings = $.extend({
+		columns : 4
+	}, options);
+	var obj = $(this);
+	var j = 1;
+			
+	this.each(function() {
+		
+		var totalListElements = $(this).children('li').size();
+		var baseColItems = Math.ceil(totalListElements / settings.columns);
+		
+		for (i=1;i<=settings.columns;i++){	
+			if(i==1){
+				$(this).addClass('listCol1').wrap('<div class="ui-list-wrapper ui-list-wrapper-'+j+'"></div>');
+			} else if($(this).is('ul'))	$(this).parents('.ui-list-wrapper-'+j).append('<ul class="listCol'+i+'"></ul>');
+		}
+		
+		var listItem = 0;
+		var k = 1;
+		var l = 0;	
+		
+		$(this).children('li').each(function(){
+			listItem = listItem+1;
+			if (listItem > baseColItems*(settings.columns-1) ){
+				$(this).parents('.ui-list-wrapper-'+j).find('.listCol'+settings.columns).append(this);
+			} else {
+				if(listItem<=(baseColItems*k)){
+					$(this).parents('.ui-list-wrapper-'+j).find('.listCol'+k).append(this);
+				}else{
+					$(this).parents('.ui-list-wrapper-'+j).find('.listCol'+(k+1)).append(this);
+					k = k+1;
+				}
+			}
+		});
+		j = j+1;		
+	});
+};
