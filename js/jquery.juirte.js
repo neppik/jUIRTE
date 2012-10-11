@@ -7,9 +7,8 @@ $.fn.wysiwyg = function(options){
 		width : "400",
 		height : "200px",
 		fonts : ["Arial","Comic Sans MS","Courier New","Monotype Corsiva","Tahoma","Times"],
-		showfonts: false,
 		buttons: [
-			'heading',
+			'heading', 'fonts',
 			'spacer','removeFormat',
 			'spacer', 'insertImage', 'createlink','unlink',
 			'spacer', 'justifyCenter', 'justifyFull', 'justifyLeft', 'justifyRight',
@@ -75,9 +74,13 @@ fontSize
 				if ( elm.nodeType != 1  ) break;
 				var _tag=elm.tagName.toUpperCase();
 				if(_tag == 'BODY' || _tag == 'HTML') break;
-
+//console.log(_tag);
 				// set the heading drop down
 				switch(_tag){
+					case 'FONT':
+						$('.ui-wysiwyg-dd-fntbtn span').text(elm.face);
+						console.log(elm.face);
+					break;
 					case 'ADDRESS':
 						$('.ui-wysiwyg-dd-btn span').text('Address');
 					break;
@@ -101,6 +104,8 @@ fontSize
 					break;
 					default:
 						$('.ui-wysiwyg-dd-btn span').text('Paragraph');
+						$('.ui-wysiwyg-dd-fntbtn span').text('Font');
+
 				}
 
 				if(_tag == 'DIV'){
@@ -154,13 +159,33 @@ fontSize
 				if(v == 'row') _class=_class+' ui-wysiwyg-row';
 				_buttonwrap.buttonset().appendTo(buttonPane);
 				_buttonwrap=$('<div/>', {class: _class});
+			} else if(v == 'fonts'){
+				var _fontlink=$("<a/>",{
+					href : "#",
+					text : _options.text,
+					class : 'ui-wysiwyg-dd-fntbtn ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					id: 'ui-wysiwyg-fntbtn-'+_options.tag,
+					click : function(){$(this).parent().find('.ui-wysiwyg-fontdropdown').slideToggle('fast')}
+				}).button(_options.icon).appendTo(_buttonwrap);
+
+				var _fontmenu=$('<ul/>').html('');
+				$.each(settings.fonts,function(i,v){
+					$('<li/>', {click: function(){$('.ui-wysiwyg-dd-fntbtn span').text(v);fnRunCommand('FontName', v)}}).html(v).appendTo(_fontmenu);
+				});
+
+				$('<div/>',{
+					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontdropdown ui-widget ui-widget-content ui-corner-all',
+					style: ' margin: 0px'
+				}).append(_fontmenu).appendTo(_fontlink);
+		
+
 			} else if(v == 'heading'){
-				$("<a/>",{
+				var _headmenu=$("<a/>",{
 					href : "#",
 					text : _options.text,
 					class : 'ui-wysiwyg-dd-btn ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					id: 'ui-wysiwyg-btn-'+_options.tag,
-					click : function(){$(this).parent().find('.ui-wysiwyg-dropdown').slideToggle('fast')}
+					click : function(){$(this).parent().find('.ui-wysiwyg-hddropdown').slideToggle('fast')}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _headermenu=$('<ul/>').html('');
@@ -175,17 +200,11 @@ fontSize
 				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 6');fnRunCommand('formatBlock', '<h6>')}}).html('<h6>Heading 6</h6>').appendTo(_headermenu);
 
 				$('<div/>',{
-					class : 'ui-wysiwyg-dropdown ui-widget ui-widget-content ui-corner-all',
+					class : 'ui-wysiwyg-dropdown ui-wysiwyg-hddropdown ui-widget ui-widget-content ui-corner-all',
 					style: 'font-size: 60%; margin: 0px'
-				}).append(_headermenu).appendTo(_buttonwrap);
+				}).append(_headermenu).appendTo(_headmenu);
 
 
-				$(document).bind('click', function (e) {
-					// hack
-					if (e.target.className != 'ui-button-text') {
-						$('.ui-wysiwyg-dropdown').slideUp();
-					}
-				});
 
 			} else {
 				$("<a/>",{
@@ -205,30 +224,27 @@ fontSize
 		_buttonwrap.buttonset().appendTo(buttonPane);
 		buttonPane.append($('<div/>', { class: 'ui-helper-clearfix'}));
 		
+				$(document).bind('click', function (e) {
+					// hack
+					if (e.target.className != 'ui-button-text') {
+						$('.ui-wysiwyg-dropdown').slideUp();
+					}
+				});
 
-
-		if(settings.showfonts == true){
-			var selectFont = $("<select/>",{
-				class: 'ui-wysiwyg-select',
-				data : {
-					commandName : "FontName"
-				},
-				change : fnExecCommand
-			}).appendTo(buttonPane); 
-			
-			$.each(settings.fonts,function(i,v){
-				$("<option/>",{
-					value : v,
-					text : v
-				}).appendTo(selectFont);
-			}); 
-		}
+		
             
 		function fnGetButton(type){
 			var _result = new Object;
 
 
 			switch(type){
+				case 'fonts':
+					_result.text='Font';
+					_result.value='';
+					_result.icon={icons: { secondary: "ui-icon-triangle-1-s"}};
+					_result.tag='FONT';
+				break;
+
 				case 'heading':
 					_result.text='Paragraph';
 					_result.value='';
