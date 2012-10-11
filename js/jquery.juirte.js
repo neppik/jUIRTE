@@ -9,7 +9,8 @@ $.fn.wysiwyg = function(options){
 		fonts : ["Arial","Comic Sans MS","Courier New","Monotype Corsiva","Tahoma","Times"],
 		showfonts: false,
 		buttons: [
-			'removeFormat',
+			'heading',
+			'spacer','removeFormat',
 			'spacer', 'insertImage', 'createlink','unlink',
 			'spacer', 'justifyCenter', 'justifyFull', 'justifyLeft', 'justifyRight',
 			'row', 'italic', 'bold', 'underline', 'strikeThrough',
@@ -62,20 +63,65 @@ fontSize
 			$('#'+_id).val($('.ui-wysiwyg-content').contents().find('body').html());
 		})
 
-
 		// set buttons to focus/hover state when elements are selected
-		$('.'+_id+'-wysiwyg-content').contents().click(
-			function(event){
-				$.each(settings.buttons,function(i,v){ $('.ui-wysiwyg-btn-'+v).removeClass(' ui-state-hover ui-state-focus'); });
+		$('.'+_id+'-wysiwyg-content').contents().bind('click focus blur',function(event){fnSetButtons(event)});
 
-				var elm=event.target ? event.target : event.srcElement;
-				do {
-					if ( elm.nodeType != 1 ) break;
-					var _tag=elm.tagName.toUpperCase();
-					if( $('#ui-wysiwyg-btn-'+_tag))$('#ui-wysiwyg-btn-'+_tag).addClass(' ui-state-hover ui-state-focus');
-				} while ((elm = elm.parentNode));
-			}
-		);
+
+
+		function fnSetButtons(event){
+			$.each(settings.buttons,function(i,v){ $('.ui-wysiwyg-btn-'+v).removeClass('ui-state-hover ui-state-focus'); });
+			var elm=event.target ? event.target : event.srcElement;
+			do {
+				if ( elm.nodeType != 1  ) break;
+				var _tag=elm.tagName.toUpperCase();
+				if(_tag == 'BODY' || _tag == 'HTML') break;
+
+				// set the heading drop down
+				switch(_tag){
+					case 'ADDRESS':
+						$('.ui-wysiwyg-dd-btn span').text('Address');
+					break;
+					case 'H1':
+						$('.ui-wysiwyg-dd-btn span').text('Heading 1');
+					break;
+					case 'H2':
+						$('.ui-wysiwyg-dd-btn span').text('Heading 2');
+					break;
+					case 'H3':
+						$('.ui-wysiwyg-dd-btn span').text('Heading 3');
+					break;
+					case 'H4':
+						$('.ui-wysiwyg-dd-btn span').text('Heading 4');
+					break;
+					case 'H5':
+						$('.ui-wysiwyg-dd-btn span').text('Heading 5');
+					break;
+					case 'H6':
+						$('.ui-wysiwyg-dd-btn span').text('Heading 6');
+					break;
+					default:
+						$('.ui-wysiwyg-dd-btn span').text('Paragraph');
+				}
+
+				if(_tag == 'DIV'){
+					switch(elm.getAttribute('style')){
+						case 'text-align: right;':
+							$('.ui-wysiwyg-btn-justifyRight').addClass('ui-state-hover ui-state-focus');
+						break;
+						case 'text-align: left;':
+							$('.ui-wysiwyg-btn-justifyLeft').addClass('ui-state-hover ui-state-focus');
+						break;
+						case 'text-align: center;':
+							$('.ui-wysiwyg-btn-justifyCenter').addClass('ui-state-hover ui-state-focus');
+						break;
+						case 'text-align: justify;':
+							$('.ui-wysiwyg-btn-justifyFull').addClass('ui-state-hover ui-state-focus');
+						break;
+					}
+				}
+				if( $('#ui-wysiwyg-btn-'+_tag))$('#ui-wysiwyg-btn-'+_tag).addClass('ui-state-hover ui-state-focus');
+			} while ((elm = elm.parentNode));
+		}
 	
 
 		// append menu container to overall container
@@ -108,6 +154,39 @@ fontSize
 				if(v == 'row') _class=_class+' ui-wysiwyg-row';
 				_buttonwrap.buttonset().appendTo(buttonPane);
 				_buttonwrap=$('<div/>', {class: _class});
+			} else if(v == 'heading'){
+				$("<a/>",{
+					href : "#",
+					text : _options.text,
+					class : 'ui-wysiwyg-dd-btn ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					id: 'ui-wysiwyg-btn-'+_options.tag,
+					click : function(){$(this).parent().find('.ui-wysiwyg-dropdown').slideToggle('fast')}
+				}).button(_options.icon).appendTo(_buttonwrap);
+
+				var _headermenu=$('<ul/>').html('');
+
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Paragraph');fnRunCommand('formatBlock', '<p>')}}).html('Paragraph').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Address');fnRunCommand('formatBlock', '<address>')}}).html('<address>Address</address>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 1');fnRunCommand('formatBlock', '<h1>')}}).html('<h1>Heading 1</h1>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 2');fnRunCommand('formatBlock', '<h2>')}}).html('<h2>Heading 2</h2>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 3');fnRunCommand('formatBlock', '<h3>')}}).html('<h3>Heading 3</h3>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 4');fnRunCommand('formatBlock', '<h4>')}}).html('<h4>Heading 4</h4>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 5');fnRunCommand('formatBlock', '<h5>')}}).html('<h5>Heading 5</h5>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$('.ui-wysiwyg-dd-btn span').text('Heading 6');fnRunCommand('formatBlock', '<h6>')}}).html('<h6>Heading 6</h6>').appendTo(_headermenu);
+
+				$('<div/>',{
+					class : 'ui-wysiwyg-dropdown ui-widget ui-widget-content ui-corner-all',
+					style: 'font-size: 60%; margin: 0px'
+				}).append(_headermenu).appendTo(_buttonwrap);
+
+
+				$(document).bind('click', function (e) {
+					// hack
+					if (e.target.className != 'ui-button-text') {
+						$('.ui-wysiwyg-dropdown').slideUp();
+					}
+				});
+
 			} else {
 				$("<a/>",{
 					href : "#",
@@ -150,6 +229,13 @@ fontSize
 
 
 			switch(type){
+				case 'heading':
+					_result.text='Paragraph';
+					_result.value='';
+					_result.icon={icons: { secondary: "ui-icon-triangle-1-s"}};
+					_result.tag='H';
+				break;
+
 				case 'createlink':
 					_result.text='Link';
 					_result.value='';
@@ -245,7 +331,7 @@ fontSize
 					_result.text='Indent';
 					_result.value='';
 					_result.icon={icons: { primary: "ui-wysiwyg-icon-indent"}, text: false};
-					_result.tag='';
+					_result.tag='BLOCKQUOTE';
 				break;
 
 				case 'outdent':
@@ -339,7 +425,8 @@ fontSize
 		}
 
 		function fnExecCommand (e) {
-			//$(this).addClass('ui-state-active ui-state-focus');
+			// to-do: need to check if element should unset other items like, LEFT justify should untoggle all other justifies
+			$(this).toggleClass('ui-state-active ui-state-focus');
 
 			switch($(this).data('commandName')){
 				case 'createlink':

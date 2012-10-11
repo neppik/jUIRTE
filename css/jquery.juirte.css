@@ -5,3 +5,9 @@
 .ui-wysiwyg .ui-button span{ font-size: 80% }
 .ui-wysiwyg-left{ float: left; margin-bottom: 4px}
 .ui-wysiwyg-row{ float: left; clear: left;}
+
+.ui-wysiwyg-dropdown{display: none;margin-left:2px;position:absolute;z-index:2229}
+.ui-wysiwyg-dropdown ul{list-style:none;margin:0;padding:10px}
+.ui-wysiwyg-dropdown ul li{cursor:pointer;padding:2px;text-decoration:underline}
+
+.ui-wysiwyg-dropdown ul li h1, .ui-wysiwyg-dropdown ul li h2, .ui-wysiwyg-dropdown ul li h3, .ui-wysiwyg-dropdown ul li h4, .ui-wysiwyg-dropdown ul li h5, .ui-wysiwyg-dropdown ul li h6 { margin: 0px; padding: 0px}
