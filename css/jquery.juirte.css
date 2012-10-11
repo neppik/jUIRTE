@@ -1,6 +1,6 @@
-.ui-wysiwyg-menu{margin:0px; padding: 0px; margin-top: -5px;  margin-left: -1px; overflow: hidden}
+.ui-wysiwyg-menu{margin:0px; padding: 0px; margin-top: -4px;  margin-left: -1px; overflow: hidden}
 .ui-wysiwyg-menu-wrap{ margin: 4px; margin-bottom: 0px}
-.ui-wysiwyg .ui-button{ min-width: 35px; font-size: 80% }
+.ui-wysiwyg .ui-button{ min-width: 30px; font-size: 80% }
 .ui-wysiwyg .ui-button span{ font-size: 80% }
 .ui-wysiwyg-left{ float: left; margin-bottom: 4px}
 .ui-wysiwyg-row{ float: left; clear: left;}
@@ -10,3 +10,4 @@
 .ui-wysiwyg-dropdown ul li{cursor:pointer;padding:2px;text-decoration:underline}
 
 .ui-wysiwyg-dropdown ul li h1, .ui-wysiwyg-dropdown ul li h2, .ui-wysiwyg-dropdown ul li h3, .ui-wysiwyg-dropdown ul li h4, .ui-wysiwyg-dropdown ul li h5, .ui-wysiwyg-dropdown ul li h6 { margin: 0px; padding: 0px}
+.ui-wysiwyg-swatch{ width: 12px; height: 12px; border: 1px solid black}
