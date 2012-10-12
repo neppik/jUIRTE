@@ -1,6 +1,6 @@
 .ui-wysiwyg-menu{margin:0px; padding: 0px; margin-top: -4px;  margin-left: -1px; overflow: hidden; }
 .ui-wysiwyg-menu-wrap{ margin: 4px; margin-bottom: 0px}
-.ui-wysiwyg .ui-button{ min-width: 30px; font-size: 80% }
+.ui-wysiwyg .ui-button{ min-width: 30px; height: 24px; font-size: 90% }
 .ui-wysiwyg .ui-button span{ font-size: 80% }
 .ui-wysiwyg-left{ float: left; margin-bottom: 4px}
 .ui-wysiwyg-row{ float: left; clear: left;}
@@ -11,25 +11,16 @@
 .ui-wysiwyg-swatch{ width: 12px; height: 12px; border: 1px solid black; text-decoration: none; display: table}
 .ui-list-wrapper ul { float: left; padding: 0px;}
 .ui-wysiwyg-fontbgcdropdown, .ui-wysiwyg-fontcldropdown{ padding: 4px;}
-/* icons */
-.ui-button .ui-icon.ui-wysiwyg-icon-italic { background-position: -62px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-bold { background-position: -2px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-underline { background-position: -143px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-strike { background-position: -122px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-hr { background-position: -360px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-ol { background-position: -82px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-ul { background-position: -20px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-center { background-position: -422px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-full { background-position: -442px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-left { background-position: -462px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-right { background-position: -482px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-link { background-position: -502px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-unlink { background-position: -642px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-indent { background-position: -402px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-outdent { background-position: -542px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-superscript { background-position: -622px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-subscript { background-position: -602px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-image { background-position: -382px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-removeformat { background-position: -582px 0; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-bgc { background-position: -760px 2px; background-image: url('../images/icons.png'); }
-.ui-button .ui-icon.ui-wysiwyg-icon-fontc { background-position: -962px -20px; background-image: url('../images/icons.png'); }
+.ui-wysiwyg-btn-strikeThrough span{ text-decoration: line-through; font-weight: normal}
+.ui-wysiwyg-btn-underline span { text-decoration: underline; font-weight: normal}
+.ui-wysiwyg-btn-forecolor span { text-decoration: underline;}
+.ui-wysiwyg-btn-italic span{ font-weight: normal}
+.ui-wysiwyg-colorinput{ width: 60px}
+
+sup{font-size: 6px; font-weight: bold} 
+sub{font-size: 6px;line-height: 1px; font-weight: bold} 
+.ui-wysiwyg-justify-wrap { margin-top: -4px; text-align: left;	  line-height: 2px; }
+.ui-wysiwyg-justify-center{ text-align: center}
+.ui-wysiwyg-justify-right{ text-align: right }
+
+.ui-wysiwyg-list-wrap{line-height: 6px; font-size: 7px; text-align: left;overflow:hidden	}

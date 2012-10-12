@@ -6,19 +6,12 @@
 <script src="js/jquery.juirte.js"></script>
 <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" />
 <link rel="stylesheet" type="text/css" href="css/jquery.juirte.css" />
-<script type="text/javascript">
-$(document).ready(function(){
-	$("#juirte_editor").juirte();
-});
-</script>
 <style type="text/css">
 	body{ font-family: arial, helvetica; font-size: 10pt}
-	.code{ margin: 10px; border: 1px solid grey; width: 300px}
 </style>
 </head>
 <body>
-
-<textarea id="juirte_editor" style="width: 520px; height: 180px;">
+<textarea id="juirte_editor1" style="width: 520px; height: 180px;">
 	<h3>jUIRTE</h3>
 	<h4>A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI</h4>
 	<b>Featuring:</b>
@@ -30,9 +23,8 @@ $(document).ready(function(){
 	</ul>
 	<b>To-Do</b>
 	<ul>
-		<li>test!</li>
+		<li>test more</li>
 	</ul>
-
 
 	<b>Example</b>
 	<div class="code">
@@ -41,6 +33,12 @@ $(document).ready(function(){
 	});
 	</div>
 </textarea>
+<script type="text/javascript">
+$(document).ready(function(){
+	$('textarea').juirte();
+});
+</script>
 
+<p>test content belowa</p>
 </body>
 </html>
