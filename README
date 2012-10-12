@@ -3,14 +3,12 @@ jUIRTE
 A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI
 
 == Featuring: ==
+* Themeroller support
 * Buttons & Buttonsets
 * Expandable
 * Cross-browser
 * Very,very,very,very SMALL!
 
-== To-Do ==
-* Fix scroll bars in IE
-* Fix items showing below textarea being hidden because no real wrapper
 
 == Example == 
 ```$(document).ready(function(){ 
