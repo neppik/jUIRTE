@@ -11,19 +11,22 @@
 </style>
 </head>
 <body>
-<textarea id="juirte_editor1" style="width: 620px; height: 180px;">
+<div id='dialog'>
+<textarea id="juirte_editor1">
 	<h3>jUIRTE</h3>
 	<h4>A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI</h4>
 	<b>Featuring:</b>
 	<ul>
 		<li>Buttons &amp; Buttonsets</li>
 		<li>Expandable</li>
+		<li>Themroller ready!</li>
 		<li>Cross-browser</li>
 		<li>Very,very,very,very SMALL!</li>
 	</ul>
 	<b>To-Do</b>
 	<ul>
 		<li>fix issues w/o spacers</li>
+		<li>slide menus up not down</li>
 	</ul>
 
 	<b>Example</b>
@@ -33,9 +36,16 @@
 	});
 	</div>
 </textarea>
+</div>
 <script type="text/javascript">
 $(document).ready(function(){
-	$('textarea').juirte();
+	// ,'stylesheet': "http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css"
+	$('#dialog').dialog({width: '600px', 'height':'400', create: function(){
+		$('textarea').juirte({'width': '100%', 'height': '80%'});
+	
+	}
+	
+	});
 });
 </script>
 </body>

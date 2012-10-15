@@ -1,13 +1,20 @@
 $.fn.juirte = function(options){
 	// based on the example @ http://stackoverflow.com/questions/5281438/how-to-create-a-text-editor-in-jquery
 
+
+// to-do
+/*
+add functions we can access like: $.fn.juirte.synccontents=function(){fnSyncContents()};
+add a function to SetContent so we can update it when the dialog opens
+*/
 	// define settings
 	var settings = $.extend({
+		resizable: false,
+		stylesheet: '',
 		language: [['html', 'Toggle HTML'],['insertimage', 'Insert Image'],['inserturl', 'Insert URL'],['paragraph', 'Paragraph'],['address', 'Address'],['heading', 'Heading'],['bgcolor', 'Background Color'],['fontcolor', 'Font Color'],['fontsize', 'Font Size'],['font', 'Font'],['paragraph', 'Paragraph'],['link', 'Link'],['removelink', 'Remove Link'],['italic', 'Italic'],['bold', 'Bold'],['underline', 'Underline'],['strike', 'Strike'],['hr', 'Horizontal Rule'],['ol', 'Ordered List'],['ul', 'Unordered List'],['center', 'Center'],['left', 'Left'],['full', 'Full'],['right', 'Right'],['indent', 'Indent'],['outdent', 'Outdent'],['superscript', 'Superscript'],['subscript', 'Subscript'],['rm', 'Remove Formating']],
 		width : "400px",
 		height : "200px",
 		colors : ['#FFFFFF', '#C0C0C0', '#808080', '#000000', '#FF0000', '#800000', '#FFFF00', '#808000', '#00FF00', '#008000', '#00FFFF', '#008080', '#0000FF', '#000080', '#FF00FF', '#800080'],
-		fontsize : ['1','2','3','4','5','6','7'],
 		fonts : ["Arial","Comic Sans MS","Courier New","Monotype Corsiva","Tahoma","Times"],
 		buttons: [
 			'italic', 'bold', 'underline', 'strikeThrough',
@@ -27,24 +34,29 @@ $.fn.juirte = function(options){
 	var lang=new Array();
 	$.each(settings.language,function(i,v){lang[v[0]]=v[1]});
 
+
+
+
+
 	// loop over all editors
 	return this.each(function(){
+		// wrapper to exec command
+		$.fn.juirte.exec = function(e){fnExecCommand(e)}
 
-		if($(this).css('width')) settings.width=$(this).css('width');
-		if($(this).css('height')) settings.height=$(this).css('height');
 
 		var _id=$(this).attr('id');
-
 		var $this = $(this).hide();
 		//var $this= $(this);
 		var _wrapper = '#'+_id+'-wrapper';
 
 		// wrap everything in a widget container
 		var _container = $("<div/>",{
-			class: 'ui-wysiwyg ui-widget ui-widget-content ui-corner-top ',
+			"class": 'ui-wysiwyg ui-widget ui-widget-content ui-corner-all',
 			css : { width : settings.width , height : settings.height },
 			id: _id+'-wrapper'
-		}).resizable();
+		});
+
+		if(settings.resizable) _container.resizable();
 
        $this.after(_container); 
 
@@ -52,35 +64,52 @@ $.fn.juirte = function(options){
 		var editor = $("<iframe/>",{
 			css : { height: '100%', width: '100%' },
 			frameborder : '0', marginwidth: '0', marginheight: '0',
-			class: _id+'-wysiwyg-content ui-wysiwyg-content',
+			"class": _id+'-wysiwyg-content ui-wysiwyg-content',
 			id: _id+'-editor'
 		}).appendTo(_container).get(0);
 
+
+		$.fn.juirte.write = function(e){
+			$('.'+_id+'-wysiwyg-content').contents().find('body').html('');
+			editor.contentWindow.document.write(e);
+			$(_wrapper).find('.ui-wysiwyg-html').val(e);
+			if(settings.stylesheet !=''){
+				$('.'+_id+'-wysiwyg-content').contents().find('head').append($('<link/>', { rel: 'stylesheet', href: settings.stylesheet, type: 'text/css' }));
+				$('.'+_id+'-wysiwyg-content').contents().find('head').append('<style type="text/css">.ui-widget{ font-size: 14px; background: #fff}</style>');
+				$('.'+_id+'-wysiwyg-content').contents().find('body').addClass('ui-widget');
+			}
+
+			// set button status
+			$('.'+_id+'-wysiwyg-content').load(function() {
+				$('.'+_id+'-wysiwyg-content').contents().find("body").bind('click', function(event) {
+					fnSetButtons(event)
+				});
+			});
+			$('.'+_id+'-wysiwyg-content').contents().find('body').bind('click',function(event){
+				fnSetButtons(event)
+			});
+		}
+
 		var _htmleditor=$('<textarea/>', {
-			class: 'ui-wysiwyg-html ui-widget-content ui-corner-top',
+			"class": 'ui-wysiwyg-html ui-widget-content ui-corner-top',
 			css: {'display':'none','margin':'0px','margin-left':'2px', 'margin-bottom':'1px', height: '98%', width: '99%', 'border':'0px'	}
 			
 		}).appendTo(_container);
 
 		// define the editor and make it writable, add default values of the textarea
 		editor.contentWindow.document.open();
-		if($(this).val()){
-			editor.contentWindow.document.write($(this).val());
-			$(_wrapper).find('.ui-wysiwyg-html').val($(this).val());
-		}
+		$.fn.juirte.write($(this).val());
 		editor.contentWindow.document.close();
 		editor.contentWindow.document.designMode="on";
+		
+		// set buttons to focus/hover state when elements are selected
 		fnDisableCSS();
-		fnShortcuts();
 
 
 		// update original textarea when contents change
 		$('.'+_id+'-wysiwyg-content').contents().bind("keyup keydown keypress focus blur", function() {fnSyncContents()});
 		$(_wrapper).find('.ui-wysiwyg-html').bind("keyup keydown keypress focus blur", function() {fnSyncContentsFromHTML()});
 		$('.'+_id+'-wysiwyg-content').contents().hover(function(){fnSyncContents()});
-
-		// set buttons to focus/hover state when elements are selected
-		$('.'+_id+'-wysiwyg-content').contents().bind('click',function(event){fnSetButtons(event)});
 
 		// append menu container to overall container
 		var wysiwyg_menu = $("<div/>",{
@@ -96,7 +125,7 @@ $.fn.juirte = function(options){
 
 		// create button wrappers for rows/spacers
 		var _i=0;
-		var _buttonwrap=$('<div/>', {class: 'ui-wysiwyg-set'+_i+' ui-wysiwyg-left'});
+		var _buttonwrap=$('<div/>', {"class": 'ui-wysiwyg-set'+_i+' ui-wysiwyg-left'});
 
 		// loop buttons and insert to containers
 		$.each(settings.buttons,function(i,v){
@@ -107,38 +136,41 @@ $.fn.juirte = function(options){
 				var _class='ui-wysiwyg-set'+_i+' ui-wysiwyg-left';
 				if(v == 'row') _class=_class+' ui-wysiwyg-row';
 				_buttonwrap.buttonset().appendTo(_button_panel);
-				_buttonwrap=$('<div/>', {class: _class});
+				_buttonwrap=$('<div/>', {"class": _class});
 			} else if(v == 'backColor'){
 				var _fontlink=$("<a/>",{
 					href : "#",
 					title: _options.title,
 					style: _options.style,
 					text : _options.text,
-					class : 'ui-wysiwyg-dd-fntbgcbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					"class" : 'ui-wysiwyg-dd-fntbgcbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					click : function(){
-						$(_wrapper).find('.ui-wysiwyg-fontbgcdropdown').slideToggle('fast');
-						var _pos=$(this).offset();
-						_pos.top=_pos.top+23;
-						$(_wrapper).find('.ui-wysiwyg-fontbgcdropdown').offset(_pos);
+						if ( $(_wrapper).find('.ui-wysiwyg-fontbgcdropdown').is(":visible") ) {
+							$(_wrapper).find('.ui-wysiwyg-fontbgcdropdown').hide();
+						} else { 
+							var _pos=$(this).offset();
+							_pos.top=_pos.top-129;
+							$(_wrapper).find('.ui-wysiwyg-fontbgcdropdown').show().offset(_pos);
+						}
+						return false;
 					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _fontmenu=$('<ul/>').html('');
 				$.each(settings.colors,function(i,v){
-					$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', v);fnRunCommand('backColor', v)}}).html('<a href="#" style="background:'+v+'" class="ui-wysiwyg-swatch" title="'+v+'"></a>').appendTo(_fontmenu);
+					$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', v);fnRunCommand('backColor', v);return false;}}).html('<a href="#" style="background:'+v+'" class="ui-wysiwyg-swatch" title="'+v+'"></a>').appendTo(_fontmenu);
 				});
 
 				var _colorinput=$('<input>',{
 					type: 'text',
-					class: 'ui-wysiwyg-colorinput',
+					"class": 'ui-wysiwyg-colorinput',
 					keypress: function(e) {if( e.keyCode == 13 ) fnRunCommand('backColor', $(this).val())}
 				});
 
-				$('<div/>',{
-					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontbgcdropdown ui-widget ui-widget-content ui-corner-all',
+				var _fontbgcontainer=$('<div/>',{
+					"class" : 'ui-wysiwyg-dropdown ui-wysiwyg-fontbgcdropdown ui-widget ui-widget-content ui-corner-all',
 					style: ' margin: 0px'
-				}).append(_fontmenu).append(_colorinput).appendTo(_container);
-				_fontmenu.column_list({ columns: 4 });
+				}).append(_colorinput).append(_fontmenu).appendTo(_container);
 
 
 			} else if(v == 'forecolor'){
@@ -147,31 +179,34 @@ $.fn.juirte = function(options){
 					title: _options.title,
 					style: _options.style,
 					text : _options.text,
-					class : 'ui-wysiwyg-dd-fntclbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					"class" : 'ui-wysiwyg-dd-fntclbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					click : function(){
-						$(_wrapper).find('.ui-wysiwyg-fontcldropdown').slideToggle('fast');
-						var _pos=$(this).offset();
-						_pos.top=_pos.top+23;
-						$(_wrapper).find('.ui-wysiwyg-fontcldropdown').offset(_pos);
+						if ( $(_wrapper).find('.ui-wysiwyg-fontcldropdown').is(":visible") ) {
+							$(_wrapper).find('.ui-wysiwyg-fontcldropdown').hide();
+						} else { 
+							var _pos=$(this).offset();
+							_pos.top=_pos.top-129;
+							$(_wrapper).find('.ui-wysiwyg-fontcldropdown').show().offset(_pos);
+						}
+						return false;
 					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _fontmenu=$('<ul/>').html('');
 				$.each(settings.colors,function(i,v){
-					$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-fntclbtn span').css('background-color', v);fnRunCommand('forecolor', v)}}).html('<a href="#" style="background:'+v+'" class="ui-wysiwyg-swatch" title="'+v+'"></a>').appendTo(_fontmenu);
+					$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-fntclbtn span').css('background-color', v);fnRunCommand('forecolor', v);return false}}).html('<a href="#" style="background:'+v+'" class="ui-wysiwyg-swatch" title="'+v+'"></a>').appendTo(_fontmenu);
 				});
 
 				var _colorinput=$('<input>',{
 					type: 'text',
-					class: 'ui-wysiwyg-colorinput',
+					"class": 'ui-wysiwyg-colorinput',
 					keypress: function(e) {if( e.keyCode == 13 ) fnRunCommand('forecolor', $(this).val())}
 				});
 				
 				$('<div/>',{
-					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontcldropdown ui-widget ui-widget-content ui-corner-all',
+					"class" : 'ui-wysiwyg-dropdown ui-wysiwyg-fontcldropdown ui-widget ui-widget-content ui-corner-all',
 					style: ' margin: 0px'
-				}).append(_fontmenu).append(_colorinput).appendTo(_container);
-				_fontmenu.column_list({ columns: 4 });
+				}).append(_colorinput).append(_fontmenu).appendTo(_container);
 
 
 			} else if(v == 'fontSize'){
@@ -180,47 +215,68 @@ $.fn.juirte = function(options){
 					title: _options.title,
 					style: _options.style,
 					text : _options.text,
-					class : 'ui-wysiwyg-dd-fntszbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					"class" : 'ui-wysiwyg-dd-fntszbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					click : function(){
-						$(_wrapper).find('.ui-wysiwyg-fontszdropdown').slideToggle('fast');
-						var _pos=$(this).offset();
-						_pos.top=_pos.top+23;
-						$(_wrapper).find('.ui-wysiwyg-fontszdropdown').offset(_pos);
+						if ( $(_wrapper).find('.ui-wysiwyg-fontszdropdown').is(":visible") ) {
+							$(_wrapper).find('.ui-wysiwyg-fontszdropdown').hide();
+						} else { 
+							var _pos=$(this).offset();
+							_pos.top=_pos.top-66;
+							_pos.left=_pos.left-24;
+							$(_wrapper).find('.ui-wysiwyg-fontszdropdown').show().offset(_pos);
+						}
+
+						return false;
 
 					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
-				var _fontmenu=$('<ul/>').html('');
-				$.each(settings.fontsize,function(i,v){
-					$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-fntszbtn span').text(v);fnRunCommand('fontSize', v)}}).html('<a href="#"><font size="'+v+'">'+v+'</font></a>').appendTo(_fontmenu);
+				var _fontsize = ['1','2','3','4','5','6','7'];
+				var _fontmenu=$('<table/>').html('');
+				$.each(_fontsize,function(i,v){
+					$('<td/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-fntszbtn span').text(v);fnRunCommand('fontSize', v);return false}}).html('<a href="#"><font size="'+v+'">'+v+'</font></a>').appendTo(_fontmenu);
 				});
 
+
 				$('<div/>',{
-					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontszdropdown ui-widget ui-widget-content ui-corner-all',
+					"class" : 'ui-wysiwyg-dropdown ui-wysiwyg-fontszdropdown ui-widget ui-widget-content ui-corner-all',
 					style: ' margin: 0px'
 				}).append(_fontmenu).appendTo(_container);
+
 			} else if(v == 'fonts'){
 				var _fontlink=$("<a/>",{
 					href : "#",
 					title: _options.title,
 					style: _options.style,
 					text : _options.text,
-					class : 'ui-wysiwyg-dd-fntbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					"class" : 'ui-wysiwyg-dd-fntbtn  ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					click : function(){
-						$(_wrapper).find('.ui-wysiwyg-fontdropdown').slideToggle('fast');
-						var _pos=$(this).offset();
-						_pos.top=_pos.top+23;
-						$(_wrapper).find('.ui-wysiwyg-fontdropdown').offset(_pos);
+						if ( $(_wrapper).find('.ui-wysiwyg-fontdropdown').is(":visible") ) {
+							$(_wrapper).find('.ui-wysiwyg-fontdropdown').hide();
+						} else { 
+							var _pos=$(this).offset();
+							_pos.top=_pos.top-121;
+							$(_wrapper).find('.ui-wysiwyg-fontdropdown').show().offset(_pos);
+						}
+						return false;
 					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _fontmenu=$('<ul/>').html('');
 				$.each(settings.fonts,function(i,v){
-					$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-fntbtn span').text(v);fnRunCommand('FontName', v)}}).html('<a href="#"><font face="'+v+'">'+v+'</font></a>').appendTo(_fontmenu);
+					$('<li/>', {click: function(){
+						if(v.length > 5){
+							var _fontface=v.substr(0, 5)+'..';
+						} else var _fontface=v;
+
+						$(_wrapper).find('.ui-wysiwyg-dd-fntbtn span').text(_fontface);
+						fnRunCommand('FontName', v);
+						return false
+					}}).html('<a href="#"><font face="'+v+'">'+v+'</font></a>').appendTo(_fontmenu);
 				});
 
 				$('<div/>',{
-					class : 'ui-wysiwyg-dropdown ui-wysiwyg-fontdropdown ui-widget ui-widget-content ui-corner-all',
+					"class" : 'ui-wysiwyg-dropdown ui-wysiwyg-fontdropdown ui-widget ui-widget-content ui-corner-all',
 					style: ' margin: 0px'
 				}).append(_fontmenu).appendTo(_container);
 			} else if(v == 'heading'){
@@ -229,42 +285,46 @@ $.fn.juirte = function(options){
 					title: _options.title,
 					style: _options.style,
 					text : _options.text,
-					class : 'ui-wysiwyg-dd-btn ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
+					"class" : 'ui-wysiwyg-dd-btn ui-wysiwyg-btn ui-wysiwyg-btn-'+v,
 					click : function(){
-						$(_wrapper).find('.ui-wysiwyg-hddropdown').slideToggle('fast')
-						var _pos=$(this).offset();
-						_pos.top=_pos.top+23;
-						$(_wrapper).find('.ui-wysiwyg-hddropdown').offset(_pos);
+						if ( $(_wrapper).find('.ui-wysiwyg-hddropdown').is(":visible") ) {
+							$(_wrapper).find('.ui-wysiwyg-hddropdown').hide();
+						} else { 
+							var _pos=$(this).offset();
+							_pos.top=_pos.top-154;
+							$(_wrapper).find('.ui-wysiwyg-hddropdown').show().offset(_pos);
+						}
+						return false;
 					}
 				}).button(_options.icon).appendTo(_buttonwrap);
 
 				var _headermenu=$('<ul/>').html('');
 				//TO-DO: make from array
-				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.paragraph);fnRunCommand('formatBlock', '<p>')}}).html('<a href="#">'+lang.paragraph+'</a>').appendTo(_headermenu);
-				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.address);fnRunCommand('formatBlock', '<address>')}}).html('<a href="#"><address>'+lang.address+'</address></a>').appendTo(_headermenu);
-				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 1');fnRunCommand('formatBlock', '<h1>')}}).html('<a href="#"><h1>'+lang.heading+' 1</h1></a>').appendTo(_headermenu);
-				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 2');fnRunCommand('formatBlock', '<h2>')}}).html('<a href="#"><h2>'+lang.heading+' 2</h2></a>').appendTo(_headermenu);
-				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 3');fnRunCommand('formatBlock', '<h3>')}}).html('<a href="#"><h3>'+lang.heading+' 3</h3></a>').appendTo(_headermenu);
-				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 4');fnRunCommand('formatBlock', '<h4>')}}).html('<a href="#"><h4>'+lang.heading+' 4</h4></a>').appendTo(_headermenu);
-				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 5');fnRunCommand('formatBlock', '<h5>')}}).html('<a href="#"><h5>'+lang.heading+' 5</h5></a>').appendTo(_headermenu);
-				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 6');fnRunCommand('formatBlock', '<h6>')}}).html('<a href="#"><h6>'+lang.heading+' 6</h6></a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.paragraph);fnRunCommand('formatBlock', '<p>'); return false}}).html('<a href="#">'+lang.paragraph+'</a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.address);fnRunCommand('formatBlock', '<address>'); return false}}).html('<a href="#"><address>'+lang.address+'</address></a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 1');fnRunCommand('formatBlock', '<h1>'); return false}}).html('<a href="#"><h1>'+lang.heading+' 1</h1></a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 2');fnRunCommand('formatBlock', '<h2>'); return false}}).html('<a href="#"><h2>'+lang.heading+' 2</h2></a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 3');fnRunCommand('formatBlock', '<h3>'); return false}}).html('<a href="#"><h3>'+lang.heading+' 3</h3></a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 4');fnRunCommand('formatBlock', '<h4>'); return false}}).html('<a href="#"><h4>'+lang.heading+' 4</h4></a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 5');fnRunCommand('formatBlock', '<h5>'); return false}}).html('<a href="#"><h5>'+lang.heading+' 5</h5></a>').appendTo(_headermenu);
+				$('<li/>', {click: function(){$(_wrapper).find('.ui-wysiwyg-dd-btn span').text(lang.heading+' 6');fnRunCommand('formatBlock', '<h6>'); return false}}).html('<a href="#"><h6>'+lang.heading+' 6</h6></a>').appendTo(_headermenu);
 
 
 
 				$('<div/>',{
-					class : 'ui-wysiwyg-dropdown ui-wysiwyg-hddropdown ui-widget ui-widget-content ui-corner-all',
+					"class" : 'ui-wysiwyg-dropdown ui-wysiwyg-hddropdown ui-widget ui-widget-content ui-corner-all',
 					style: 'font-size: 60%; margin: 0px'
-				}).append(_headermenu).appendTo(_container);
+				}).append(_headermenu).prependTo(_container);
 			} else {
 				$("<a/>",{
 					href : "#",
 					title: _options.title,
 					style: _options.style,
 					html : _options.text,
-					class : 'ui-wysiwyg-btn ui-wysiwyg-btn-'+v+' ui-wysiwyg-btn-'+_options.tag+' '+_options.class,
+					"class" : 'ui-wysiwyg-btn ui-wysiwyg-btn-'+v+' ui-wysiwyg-btn-'+_options.tag+' '+_options.className,
 					data : {
 						commandName : v,
-						class : _options.class
+						"class" : _options.className
 					},
 					click : fnExecCommand 
 				}).button(_options.icon).appendTo(_buttonwrap);
@@ -273,60 +333,42 @@ $.fn.juirte = function(options){
 		_buttonwrap.buttonset().appendTo(_button_panel);
 
 		// add a clear fix to clean up floating items
-		_button_panel.append($('<div/>', { class: 'ui-helper-clearfix'}));
+		_button_panel.append($('<div/>', { "class": 'ui-helper-clearfix'}));
 	
 		// fix lack of height from menu so items below show properly after the editor
 		$('<div/>').height(wysiwyg_menu.height()).insertAfter(_container);
 
 
 		// hide any drop down when clicked
-		$(document).bind('click', function (e) {
+		$(document).bind('click', function (e){fnHideDropDowns(e)});
+		$('.ui-wysiwyg-btn').bind('click', function (e){fnHideDropDowns(e)});
+
+		function fnHideDropDowns(e){
 			if(!$(e.target).parents().hasClass('ui-wysiwyg-dropdown')){
-				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-btn'))$('.ui-wysiwyg-hddropdown').slideUp();
-				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-fntbtn'))$('.ui-wysiwyg-fontdropdown').slideUp();
-				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-fntszbtn'))$('.ui-wysiwyg-fontszdropdown').slideUp();
-				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-fntclbtn'))$('.ui-wysiwyg-fontcldropdown').slideUp();
-				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-fntbgcbtn'))$('.ui-wysiwyg-fontbgcdropdown').slideUp();
+				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-btn'))$('.ui-wysiwyg-hddropdown').hide();
+				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-fntbtn'))$('.ui-wysiwyg-fontdropdown').hide();
+				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-fntszbtn'))$('.ui-wysiwyg-fontszdropdown').hide();
+				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-fntclbtn'))$('.ui-wysiwyg-fontcldropdown').hide();
+				if (!$(e.target).parents().hasClass('ui-wysiwyg-dd-fntbgcbtn'))$('.ui-wysiwyg-fontbgcdropdown').hide();
 			}
-		});
-
-
-		// keyboard shortcuts
-		function fnShortcuts(){
-			$(editor.contentWindow.document).keydown(function(event) {
-				var _key=String.fromCharCode(event.which).toLowerCase();
-				if(event.ctrlKey){
-					switch(_key){
-						case 'b':
-							fnExecCommand('bold');
-							if( $(_wrapper).find('.ui-wysiwyg-btn-B'))$(_wrapper).find('.ui-wysiwyg-btn-B').addClass('ui-state-hover ui-state-focus');
-						break;
-						case 'i':
-							fnExecCommand('italic');
-							if( $(_wrapper).find('.ui-wysiwyg-btn-I'))$(_wrapper).find('.ui-wysiwyg-btn-I').addClass('ui-state-hover ui-state-focus');
-						break;
-
-						case 'u':
-							fnExecCommand('underline');
-							if( $(_wrapper).find('.ui-wysiwyg-btn-U'))$(_wrapper).find('.ui-wysiwyg-btn-U').addClass('ui-state-hover ui-state-focus');
-						break;
-					}
-				}
-			});
 		}
 
 		// disable css modes
 		function fnDisableCSS(){
+			var contentWindow = editor.contentWindow;
+
 			try {
-                editor.execCommand("styleWithCSS", 0, false);
+                contentWindow.document.execCommand("styleWithCSS", 0, false);
             } catch (e) {
                 try {
-                    editor.execCommand("useCSS", 0, true);
+                 contentWindow.document.execCommand("useCSS", 0, true);
                 } catch (e) {
+
                     try {
-                        editor.execCommand('styleWithCSS', false, false);
+                        contentWindow.document.execCommand('styleWithCSS', false, false);
                     }
                     catch (e) {
+
                     }
                 }
             }
@@ -386,7 +428,12 @@ $.fn.juirte = function(options){
 
 				// set the font drop downs
 				if(_tag == 'FONT'){
-					if(elm.face) $(_wrapper).find('.ui-wysiwyg-dd-fntbtn span').text(elm.face);
+					if(elm.face){
+						if(elm.face.length > 5){
+							var _fontface=elm.face.substr(0, 5)+'..';
+						} else var _fontface=elm.face;
+						$(_wrapper).find('.ui-wysiwyg-dd-fntbtn span').text(_fontface);
+					}
 					if(elm.size) $(_wrapper).find('.ui-wysiwyg-dd-fntszbtn span').text(elm.size);
 					if(elm.color){
 						$(_wrapper).find('.ui-wysiwyg-dd-fntclbtn span').css('background-color', elm.color);
@@ -430,7 +477,7 @@ $.fn.juirte = function(options){
 			var _result = new Object;
 
 			_result.style=null;
-			_result.class=null;
+			_result.className=null;
 			_result.title=null;
 			_result.icon=null;
 
@@ -438,7 +485,7 @@ $.fn.juirte = function(options){
 				case 'html':
 					_result.title=lang.html;
 					_result.text='&lsaquo;/&rsaquo;';
-					_result.class='';
+					_result.className='';
 					_result.icon=null;
 					_result.tag='';
 				break;
@@ -446,7 +493,7 @@ $.fn.juirte = function(options){
 				case 'backColor':
 					_result.title=lang.bgcolor;
 					_result.text='BG';
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: {secondary: "ui-icon-triangle-1-s"}};
 					_result.tag='FONT';
 				break;
@@ -455,7 +502,7 @@ $.fn.juirte = function(options){
 					_result.title=lang.fontcolor;
 					_result.text='A';
 					_result.style='text-decoration: underline';
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { secondary: "ui-icon-triangle-1-s"}};
 					_result.tag='FONT';
 				break;
@@ -463,7 +510,7 @@ $.fn.juirte = function(options){
 				case 'fontSize':
 					_result.title=lang.fontsize;
 					_result.text=lang.fontsize;
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { secondary: "ui-icon-triangle-1-s"}};
 					_result.tag='FONT';
 				break;
@@ -471,7 +518,7 @@ $.fn.juirte = function(options){
 				case 'fonts':
 					_result.title=lang.font;
 					_result.text=lang.font;
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { secondary: "ui-icon-triangle-1-s"}};
 					_result.tag='FONT';
 				break;
@@ -479,21 +526,21 @@ $.fn.juirte = function(options){
 				case 'heading':
 					_result.title=lang.heading;
 					_result.text=lang.paragraph;
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { secondary: "ui-icon-triangle-1-s"}};
 					_result.tag='H';
 				break;
 
 				case 'createlink':
 					_result.text=lang.link;
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { primary: "ui-icon-link"}, text: false};
 					_result.tag='';
 				break;
 
 				case 'unlink':
 					_result.text=lang.removelink;
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { primary: "ui-icon-cancel"}, text: false};
 					_result.tag='A';
 				break;
@@ -502,7 +549,7 @@ $.fn.juirte = function(options){
 					_result.title=lang.italic;
 					_result.text='I';
 					_result.style='font-style: italic';
-					_result.class='';
+					_result.className='';
 					_result.icon=null;
 					_result.tag='I';
 				break;
@@ -511,7 +558,7 @@ $.fn.juirte = function(options){
 					_result.title=lang.bold;
 					_result.text='B';
 					_result.style='font-weight: bold';
-					_result.class='';
+					_result.className='';
 					_result.icon=null;
 					_result.tag='B';
 				break;
@@ -520,7 +567,7 @@ $.fn.juirte = function(options){
 					_result.title=lang.underline;
 					_result.text='U';
 					_result.style='text-decoration: underline';
-					_result.class='';
+					_result.className='';
 					_result.icon=null;
 					_result.tag='U';
 				break;
@@ -529,14 +576,14 @@ $.fn.juirte = function(options){
 					_result.title=lang.strike;
 					_result.text='S';
 					_result.style='text-decoration: line-through';
-					_result.class='';
+					_result.className='';
 					_result.icon=null;
 					_result.tag='STRIKE';
 				break;
 
 				case 'insertHorizontalRule':
 					_result.text=lang.hr;
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { primary: "ui-icon-minusthick"}, text: false};
 					_result.tag='HR';
 				break;
@@ -544,7 +591,7 @@ $.fn.juirte = function(options){
 				case 'insertOrderedList':
 					_result.title=lang.ol;
 					_result.text='<div class="ui-wysiwyg-list-wrap">1 ---<br>2 ---<br>3 ---</div>';
-					_result.class='ui-wysiwyg-list';
+					_result.className='ui-wysiwyg-list';
 					_result.icon=null;
 					_result.tag='OL';
 				break;
@@ -552,7 +599,7 @@ $.fn.juirte = function(options){
 				case 'insertUnorderedList':
 					_result.title=lang.ul;
 					_result.text='<div class="ui-wysiwyg-list-wrap">&bull; ---<br>&bull; ---<br>&bull; ---</div>';
-					_result.class='ui-wysiwyg-list';
+					_result.className='ui-wysiwyg-list';
 					_result.icon=null;
 					_result.tag='UL';
 				break;
@@ -560,7 +607,7 @@ $.fn.juirte = function(options){
 				case 'justifyCenter':
 					_result.text='<div class="ui-wysiwyg-justify-wrap ui-wysiwyg-justify-center">__<br>_<br>__<br>_<br>__<br>_<br>__<br><br></div>';
 					_result.title=lang.center;
-					_result.class='ui-wysiwyg-justify';
+					_result.className='ui-wysiwyg-justify';
 					_result.icon=null;
 					_result.style='';
 					_result.tag='CENTER';
@@ -569,7 +616,7 @@ $.fn.juirte = function(options){
 				case 'justifyLeft':
 					_result.text='<div class="ui-wysiwyg-justify-wrap">__<br>_<br>__<br>_<br>__<br>_<br>__<br><br></div>';
 					_result.title=lang.left;
-					_result.class='ui-wysiwyg-justify';
+					_result.className='ui-wysiwyg-justify';
 					_result.icon=null;
 					_result.tag='';
 				break;
@@ -577,7 +624,7 @@ $.fn.juirte = function(options){
 				case 'justifyFull':
 					_result.text='<div class="ui-wysiwyg-justify-wrap">__<br>__<br>__<br>__<br>__<br>__<br>__<br><br></div>';
 					_result.title=lang.full;
-					_result.class='ui-wysiwyg-justify';
+					_result.className='ui-wysiwyg-justify';
 					_result.icon=null;
 					_result.tag='';
 				break;	
@@ -585,21 +632,21 @@ $.fn.juirte = function(options){
 				case 'justifyRight':
 					_result.text='<div class="ui-wysiwyg-justify-wrap ui-wysiwyg-justify-right">__<br>_<br>__<br>_<br>__<br>_<br>__<br><br></div>';
 					_result.title=lang.right;
-					_result.class='ui-wysiwyg-justify';
+					_result.className='ui-wysiwyg-justify';
 					_result.icon=null;
 					_result.tag='';
 				break;
 
 				case 'indent':
 					_result.text=lang.indent;
-					_result.class='ui-wysiwyg-dent';
+					_result.className='ui-wysiwyg-dent';
 					_result.icon={icons: { primary: "ui-icon-arrowthickstop-1-e"}, text: false};
 					_result.tag='BLOCKQUOTE';
 				break;
 
 				case 'outdent':
 					_result.text=lang.outdent;
-					_result.class='ui-wysiwyg-dent';
+					_result.className='ui-wysiwyg-dent';
 					_result.icon={icons: { primary: "ui-icon-arrowthickstop-1-w"}, text: false};
 					_result.tag='';
 				break;
@@ -607,7 +654,7 @@ $.fn.juirte = function(options){
 				case 'superscript':
 					_result.text='x<sup>2</sup>';
 					_result.title=lang.superscript;
-					_result.class='ui-wysiwyg-script';
+					_result.className='ui-wysiwyg-script';
 					_result.icon=null;
 					_result.tag='SUP';
 				break;
@@ -615,28 +662,28 @@ $.fn.juirte = function(options){
 				case 'subscript':
 					_result.text='x<sub>2</sub>';
 					_result.title=lang.subscript;
-					_result.class='ui-wysiwyg-script';
+					_result.className='ui-wysiwyg-script';
 					_result.icon=null;
 					_result.tag='SUB';
 				break;
 
 				case 'insertImage':
 					_result.text=lang.insertimage;
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { primary: "ui-icon-image"}, text: false};
 					_result.tag='IMG';
 				break;
 
 				case 'removeFormat':
 					_result.text=lang.rm;
-					_result.class='';
+					_result.className='';
 					_result.icon={icons: { primary: "ui-icon-pencil"}, text: false};
 					_result.tag='';
 				break;
 
 				default:
 					_result.text=type;
-					_result.class='';
+					_result.className='';
 					_result.icon=null;
 					_result.tag=null;
 			}
@@ -647,7 +694,7 @@ $.fn.juirte = function(options){
 		function fnRunDialog(type){
 			switch(type){
 				case 'createlink':
-					$('<div/>', {'title': settings.lang.inserturl}).dialog({
+					$('<div/>', {'title': lang.inserturl}).dialog({
 						autoOpen: true,
 						modal: true,
 						buttons: {
@@ -664,7 +711,7 @@ $.fn.juirte = function(options){
 				break;	
 				
 				case 'insertImage':
-					$('<div/>', {'title': settings.lang.insertimage}).dialog({
+					$('<div/>', {'title': lang.insertimage}).dialog({
 						autoOpen: true,
 						modal: true,
 						buttons: {
@@ -685,7 +732,7 @@ $.fn.juirte = function(options){
 		// execute a execCommand
 		function fnRunCommand(cmd, val){
 			// if command is ran lets hide the menus
-			$('.ui-wysiwyg-dropdown').slideUp();
+			$('.ui-wysiwyg-dropdown').hide();
 			var contentWindow = editor.contentWindow;
 			contentWindow.focus();
 			contentWindow.document.execCommand(cmd, false, val);
@@ -698,7 +745,7 @@ $.fn.juirte = function(options){
 		// execute a command, either run dialog or run command
 		function fnExecCommand (e) {
 			var _ignore=['createlink', 'unlink', 'insertImage', 'removeFormat', 'html'];
-			
+
 			if($(this).data('class')) $(_wrapper).find('.'+$(this).data('class')).removeClass('ui-state-active ui-state-focus');
 			if(jQuery.inArray($(this).data('commandName'), _ignore) == -1) $(this).toggleClass('ui-state-active ui-state-focus');
 
@@ -736,6 +783,8 @@ $.fn.juirte = function(options){
     });
 };
 
+// TO-DO: make these extend the plugin not jquery
+
 $.extend($.ui.dialog.prototype.options, { 
     open: function() {
         var $this = $(this);
@@ -768,42 +817,3 @@ $.cssHooks.backgroundColor = {
         }
     }
 }
-
- $.fn.column_list = function(options) {
-	var settings = $.extend({
-		columns : 4
-	}, options);
-	var obj = $(this);
-	var j = 1;
-			
-	this.each(function() {
-		
-		var totalListElements = $(this).children('li').size();
-		var baseColItems = Math.ceil(totalListElements / settings.columns);
-		
-		for (i=1;i<=settings.columns;i++){	
-			if(i==1){
-				$(this).addClass('listCol1').wrap('<div class="ui-list-wrapper ui-list-wrapper-'+j+'"></div>');
-			} else if($(this).is('ul'))	$(this).parents('.ui-list-wrapper-'+j).append('<ul class="listCol'+i+'"></ul>');
-		}
-		
-		var listItem = 0;
-		var k = 1;
-		var l = 0;	
-		
-		$(this).children('li').each(function(){
-			listItem = listItem+1;
-			if (listItem > baseColItems*(settings.columns-1) ){
-				$(this).parents('.ui-list-wrapper-'+j).find('.listCol'+settings.columns).append(this);
-			} else {
-				if(listItem<=(baseColItems*k)){
-					$(this).parents('.ui-list-wrapper-'+j).find('.listCol'+k).append(this);
-				}else{
-					$(this).parents('.ui-list-wrapper-'+j).find('.listCol'+(k+1)).append(this);
-					k = k+1;
-				}
-			}
-		});
-		j = j+1;		
-	});
-};

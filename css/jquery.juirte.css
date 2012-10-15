@@ -12,7 +12,6 @@
 .ui-wysiwyg-dropdown ul{list-style:none;margin:0;padding:10px}
 .ui-wysiwyg-dropdown ul li{cursor:pointer;padding:2px;text-decoration:underline}
 .ui-wysiwyg-dropdown ul li h1,.ui-wysiwyg-dropdown ul li h2,.ui-wysiwyg-dropdown ul li h3,.ui-wysiwyg-dropdown ul li h4,.ui-wysiwyg-dropdown ul li h5,.ui-wysiwyg-dropdown ul li h6{margin:0;padding:0}
-.ui-wysiwyg-fontbgcdropdown,.ui-wysiwyg-fontcldropdown{padding:4px}
 .ui-wysiwyg-justify-wrap{line-height:2px;margin-top:-4px;text-align:left}
 .ui-wysiwyg-justify-center{text-align:center}
 .ui-wysiwyg-justify-right{text-align:right}
@@ -21,4 +20,7 @@
 .ui-wysiwyg-menu{margin:-4px 0 0 -1px;overflow:hidden;padding:0}
 .ui-wysiwyg-menu-wrap{margin:4px 4px 0}
 .ui-wysiwyg-row{clear:left;float:left}
-.ui-wysiwyg-swatch{border:1px solid #000;display:table;height:12px;text-decoration:none;width:12px}
+.ui-wysiwyg-swatch{border:1px solid #000;display:table;height:12px;text-decoration:none;width:100%}
+.ui-wysiwyg-fontbgcdropdown,.ui-wysiwyg-fontcldropdown{padding:4px; width: 80px}
+.ui-wysiwyg-fontdropdown,.ui-wysiwyg-fontbgcdropdown,.ui-wysiwyg-fontcldropdown{ overflow: auto; height: 120px;}
+.ui-wysiwyg-fontdropdown{ width: 200px}
