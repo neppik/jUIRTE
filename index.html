@@ -40,7 +40,30 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	// ,'stylesheet': "http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css"
-	$('#dialog').dialog({width: '600px', 'height':'400', create: function(){
+	$('#dialog').dialog({	
+	height: 300,draggable: false,
+		width: 545,	title:'test',
+		//modal: true,
+		/*buttons: [ {
+			 id: "emailDialogSave",
+			 text: 'pp',
+			 click: function() {
+				 fnSendEmail(mode, itemid);
+				}
+			},
+			{
+			 id: "emailDialogCancel",
+			 text: 'pp',
+			 click: function() { 
+				fnEmailDialogClear();
+				$( this ).dialog("close");
+			}
+		}]	,*/
+		resizable: false,
+		create: function(){
+            jQuery(document).unbind('mousedown.dialog-overlay').unbind('mouseup.dialog-overlay');
+
+
 		$('textarea').juirte({'width': '100%', 'height': '80%'});
 	
 	}

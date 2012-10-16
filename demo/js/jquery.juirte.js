@@ -97,9 +97,9 @@ add a function to SetContent so we can update it when the dialog opens
 		}).appendTo(_container);
 
 		// define the editor and make it writable, add default values of the textarea
-		editor.contentWindow.document.open();
+		if($.browser.mozilla == true) editor.contentWindow.document.open();
 		$.fn.juirte.write($(this).val());
-		editor.contentWindow.document.close();
+		if($.browser.mozilla == true) editor.contentWindow.document.close();
 		editor.contentWindow.document.designMode="on";
 		
 		// set buttons to focus/hover state when elements are selected
@@ -391,16 +391,11 @@ add a function to SetContent so we can update it when the dialog opens
 			$.each(settings.buttons,function(i,v){ $(_wrapper).find('.ui-wysiwyg-btn-'+v).removeClass('ui-state-hover ui-state-focus'); });
 			var elm=event.target ? event.target : event.srcElement;
 			do {
-				if ( elm.nodeType != 1  ) break;
 				var _tag=elm.tagName.toUpperCase();
 				if(_tag == 'BODY' || _tag == 'HTML') break;
-
 				//console.log(_tag);
-
 				// some conversions
 				if(_tag == 'STRONG') _tag = 'B';
-
-
 				// set the heading drop down
 				switch(_tag){
 					case 'ADDRESS':
@@ -441,13 +436,19 @@ add a function to SetContent so we can update it when the dialog opens
 					}
 
 				}
-
 				// set background color
-				if($(elm).css('background-color')){
+				try{
+					
+					if($(elm).css('background-color')){
+					
 					if($(elm).css('backgroundColor') != 'transparent'){
 						$(_wrapper).find('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', $(elm).css('backgroundColor'));
 						$(_wrapper).find('.ui-wysiwyg-fontbgcdropdown .ui-wysiwyg-colorinput').val($(elm).css('backgroundColor'));
 					}
+					
+					}
+				} catch (e){
+					// opera bug
 				}
 
 				// set the justify items
