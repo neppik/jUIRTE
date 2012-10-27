@@ -1,4 +1,3 @@
-.ui-list-wrapper ul{float:left;padding:0}
 .ui-wysiwyg .ui-button{font-size:90%;height:24px;min-width:30px}
 .ui-wysiwyg .ui-button span{font-size:80%}
 .ui-wysiwyg sub{font-size:6px;font-weight:700;line-height:1px}
@@ -17,7 +16,7 @@
 .ui-wysiwyg-justify-right{text-align:right}
 .ui-wysiwyg-left{float:left;margin-bottom:4px}
 .ui-wysiwyg-list-wrap{font-size:7px;line-height:6px;overflow:hidden;text-align:left}
-.ui-wysiwyg-menu{margin:-4px 0 0 -1px;overflow:hidden;padding:0}
+.ui-wysiwyg-menu{margin:-4px 0 0 -1px;padding:0}
 .ui-wysiwyg-menu-wrap{margin:4px 4px 0}
 .ui-wysiwyg-row{clear:left;float:left}
 .ui-wysiwyg-swatch{border:1px solid #000;display:table;height:12px;text-decoration:none;width:100%}

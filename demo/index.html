@@ -12,6 +12,8 @@
 </head>
 <body>
 <div id='dialog'>
+
+<fieldset>
 <textarea id="juirte_editor1">
 	<h3>jUIRTE</h3>
 	<h4>A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI</h4>
@@ -33,10 +35,17 @@
 		<blockquote>$("#myEditor").wysiwyg();</blockquote>
 	});</blockquote>
 </textarea>
-</div>
+
+</fieldset></div>
 <script type="text/javascript">
 $(document).ready(function(){
-	$('textarea').juirte({'width': '600px', 'height': '250px' ,'stylesheet': "http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css"});
+						//$('#admin-edit-tabs').tabs();
+						$('#dialog').dialog({
+						width:'100%',
+							create: function(){
+								$('textarea').juirte({'width': '600px', 'height': '250px' ,'stylesheet': "http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css"});
+								}
+							});
 });
 </script>
 </body>

@@ -4,6 +4,7 @@ $.fn.juirte = function(options){
 
 // to-do
 /*
+add function 'hook' stype things: http://www.learningjquery.com/2009/03/making-a-jquery-plugin-truly-customizable
 add functions we can access like: $.fn.juirte.synccontents=function(){fnSyncContents()};
 add a function to SetContent so we can update it when the dialog opens
 */
@@ -34,15 +35,10 @@ add a function to SetContent so we can update it when the dialog opens
 	var lang=new Array();
 	$.each(settings.language,function(i,v){lang[v[0]]=v[1]});
 
-
-
-
-
 	// loop over all editors
 	return this.each(function(){
 		// wrapper to exec command
 		$.fn.juirte.exec = function(e){fnExecCommand(e)}
-
 
 		var _id=$(this).attr('id');
 		var $this = $(this).hide();
@@ -51,7 +47,7 @@ add a function to SetContent so we can update it when the dialog opens
 
 		// wrap everything in a widget container
 		var _container = $("<div/>",{
-			"class": 'ui-wysiwyg ui-widget ui-widget-content ui-corner-all',
+			"class": 'ui-wysiwyg ui-widget ui-widget-content ui-corner-all ui-wysiwyg-container',
 			css : { width : settings.width , height : settings.height },
 			id: _id+'-wrapper'
 		});
@@ -79,7 +75,7 @@ add a function to SetContent so we can update it when the dialog opens
 				$('.'+_id+'-wysiwyg-content').contents().find('body').addClass('ui-widget');
 			}
 
-			// set button status
+			// set button status, cross browser required us to bind on load and outside of load
 			$('.'+_id+'-wysiwyg-content').load(function() {
 				$('.'+_id+'-wysiwyg-content').contents().find("body").bind('click', function(event) {
 					fnSetButtons(event)
@@ -96,13 +92,13 @@ add a function to SetContent so we can update it when the dialog opens
 			
 		}).appendTo(_container);
 
-		// define the editor and make it writable, add default values of the textarea
+		// define the editor and make it writable, add default values of the textarea - firefox needs the doc open, it messes up other browsers when placed in dialogs
 		if($.browser.mozilla == true) editor.contentWindow.document.open();
 		$.fn.juirte.write($(this).val());
 		if($.browser.mozilla == true) editor.contentWindow.document.close();
 		editor.contentWindow.document.designMode="on";
 		
-		// set buttons to focus/hover state when elements are selected
+		// disable css mode for editing
 		fnDisableCSS();
 
 
@@ -334,10 +330,9 @@ add a function to SetContent so we can update it when the dialog opens
 
 		// add a clear fix to clean up floating items
 		_button_panel.append($('<div/>', { "class": 'ui-helper-clearfix'}));
-	
-		// fix lack of height from menu so items below show properly after the editor
-		$('<div/>').height(wysiwyg_menu.height()).insertAfter(_container);
 
+		// fix lack of height from menu so items below show properly after the editor
+		//$('<div/>').height(wysiwyg_menu.height()).insertAfter(_container);
 
 		// hide any drop down when clicked
 		$(document).bind('click', function (e){fnHideDropDowns(e)});
@@ -575,7 +570,7 @@ add a function to SetContent so we can update it when the dialog opens
 
 				case 'strikeThrough':
 					_result.title=lang.strike;
-					_result.text='S';
+					_result.text='ABC';
 					_result.style='text-decoration: line-through';
 					_result.className='';
 					_result.icon=null;
@@ -707,7 +702,17 @@ add a function to SetContent so we can update it when the dialog opens
 							"Cancel": function() {
 								$(this).dialog("close");
 							}
-						}
+						},
+						open: function() {
+							var $this = $(this);
+							$this.parent().find('.ui-dialog-buttonpane button:first').focus();
+							$this.keypress(function(e) {
+								if( e.keyCode == 13 ) {
+									$this.parent().find('.ui-dialog-buttonpane button:first').click();
+									return false;
+								}
+							});
+						} 
 					}).html('<input type="text" value="http://"/>');
 				break;	
 				
@@ -724,7 +729,17 @@ add a function to SetContent so we can update it when the dialog opens
 							"Cancel": function() {
 								$(this).dialog("close");
 							}
-						}
+						},
+						open: function() {
+							var $this = $(this);
+							$this.parent().find('.ui-dialog-buttonpane button:first').focus();
+							$this.keypress(function(e) {
+								if( e.keyCode == 13 ) {
+									$this.parent().find('.ui-dialog-buttonpane button:first').click();
+									return false;
+								}
+							});
+						} 
 					}).html('<input type="text" value="http://"/>');
 				break;
 			}
@@ -781,40 +796,28 @@ add a function to SetContent so we can update it when the dialog opens
 			$('#'+_id).val(_code);
 		}
 
+		$.cssHooks.backgroundColor = {
+			get: function(elem) {
+				if (elem.currentStyle)
+					var bg = elem.currentStyle["background-color"];
+				else if (window.getComputedStyle)
+					var bg = document.defaultView.getComputedStyle(elem,
+						null).getPropertyValue("background-color");
+				if (bg.search("rgb") == -1)
+					return bg;
+				else {
+					bg = bg.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+					function hex(x) {
+						return ("0" + parseInt(x).toString(16)).slice(-2);
+					}
+				   if(!bg) return false; 
+					return "#" + hex(bg[1]) + hex(bg[2]) + hex(bg[3]);
+				}
+			}
+		}
+
     });
 };
 
-// TO-DO: make these extend the plugin not jquery
 
-$.extend($.ui.dialog.prototype.options, { 
-    open: function() {
-        var $this = $(this);
-        $this.parent().find('.ui-dialog-buttonpane button:first').focus();
-        $this.keypress(function(e) {
-            if( e.keyCode == 13 ) {
-                $this.parent().find('.ui-dialog-buttonpane button:first').click();
-                return false;
-            }
-        });
-    } 
-});
 
-$.cssHooks.backgroundColor = {
-    get: function(elem) {
-        if (elem.currentStyle)
-            var bg = elem.currentStyle["background-color"];
-        else if (window.getComputedStyle)
-            var bg = document.defaultView.getComputedStyle(elem,
-                null).getPropertyValue("background-color");
-        if (bg.search("rgb") == -1)
-            return bg;
-        else {
-            bg = bg.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-            function hex(x) {
-                return ("0" + parseInt(x).toString(16)).slice(-2);
-            }
-           if(!bg) return false; 
-			return "#" + hex(bg[1]) + hex(bg[2]) + hex(bg[3]);
-        }
-    }
-}
