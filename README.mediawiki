@@ -11,9 +11,9 @@ A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI
 
 
 == Example == 
-```$(document).ready(function(){ 
- $("#myEditor").wysiwyg();
-});```
+ $(document).ready(function(){ 
+  $("#myEditor").wysiwyg();
+ });
 
 == License ==
 LGPL - use it how you want!
