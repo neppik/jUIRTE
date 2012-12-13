@@ -7,8 +7,10 @@ A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI
 * Buttons & Buttonsets
 * Expandable
 * Cross-browser
-* Very,very,very,very SMALL!
+* Light weight (and fast loading)
 
+== Demo ==
+* http://juichat.com/juirte/
 
 == Example == 
  $(document).ready(function(){ 
@@ -17,3 +19,9 @@ A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI
 
 == License ==
 LGPL - use it how you want!
+
+== To-Do ==
+* Plugins
+* Design options (divs/tables)
+* Force HTML5 code
+* Test on mobiles

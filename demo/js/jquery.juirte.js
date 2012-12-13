@@ -1,3 +1,4 @@
+(function( $ ){
 $.fn.juirte = function(options){
 	// based on the example @ http://stackoverflow.com/questions/5281438/how-to-create-a-text-editor-in-jquery
 
@@ -819,5 +820,4 @@ add a function to SetContent so we can update it when the dialog opens
     });
 };
 
-
-
+})( jQuery );
