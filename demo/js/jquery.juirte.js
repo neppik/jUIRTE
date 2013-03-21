@@ -94,9 +94,9 @@ add a function to SetContent so we can update it when the dialog opens
 		}).appendTo(_container);
 
 		// define the editor and make it writable, add default values of the textarea - firefox needs the doc open, it messes up other browsers when placed in dialogs
-		if($.browser.mozilla == true) editor.contentWindow.document.open();
+		if(navigator.userAgent.match(/mozilla/i)) editor.contentWindow.document.open();
 		$.fn.juirte.write($(this).val());
-		if($.browser.mozilla == true) editor.contentWindow.document.close();
+		if(navigator.userAgent.match(/mozilla/i)) editor.contentWindow.document.close();
 		editor.contentWindow.document.designMode="on";
 		
 		// disable css mode for editing
