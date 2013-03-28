@@ -1,14 +1,15 @@
 (function( $ ){
 $.fn.juirte = function(options){
-	// based on the example @ http://stackoverflow.com/questions/5281438/how-to-create-a-text-editor-in-jquery
 
+	/*
+	* based on the example @ http://stackoverflow.com/questions/5281438/how-to-create-a-text-editor-in-jquery
+	* 
+	* to-do:
+	* - add function 'hook' stype things: http://www.learningjquery.com/2009/03/making-a-jquery-plugin-truly-customizable
+	* - add functions we can access like: $.fn.juirte.synccontents=function(){fnSyncContents()};
+	* - add a function to SetContent so we can update it when the dialog opens
+	*/
 
-// to-do
-/*
-add function 'hook' stype things: http://www.learningjquery.com/2009/03/making-a-jquery-plugin-truly-customizable
-add functions we can access like: $.fn.juirte.synccontents=function(){fnSyncContents()};
-add a function to SetContent so we can update it when the dialog opens
-*/
 	// define settings
 	var settings = $.extend({
 		resizable: false,
@@ -101,7 +102,6 @@ add a function to SetContent so we can update it when the dialog opens
 		
 		// disable css mode for editing
 		fnDisableCSS();
-
 
 		// update original textarea when contents change
 		$('.'+_id+'-wysiwyg-content').contents().bind("keyup keydown keypress focus blur", function() {fnSyncContents()});
@@ -332,9 +332,6 @@ add a function to SetContent so we can update it when the dialog opens
 		// add a clear fix to clean up floating items
 		_button_panel.append($('<div/>', { "class": 'ui-helper-clearfix'}));
 
-		// fix lack of height from menu so items below show properly after the editor
-		//$('<div/>').height(wysiwyg_menu.height()).insertAfter(_container);
-
 		// hide any drop down when clicked
 		$(document).bind('click', function (e){fnHideDropDowns(e)});
 		$('.ui-wysiwyg-btn').bind('click', function (e){fnHideDropDowns(e)});
@@ -434,14 +431,11 @@ add a function to SetContent so we can update it when the dialog opens
 				}
 				// set background color
 				try{
-					
 					if($(elm).css('background-color')){
-					
-					if($(elm).css('backgroundColor') != 'transparent'){
-						$(_wrapper).find('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', $(elm).css('backgroundColor'));
-						$(_wrapper).find('.ui-wysiwyg-fontbgcdropdown .ui-wysiwyg-colorinput').val($(elm).css('backgroundColor'));
-					}
-					
+						if($(elm).css('backgroundColor') != 'transparent'){
+							$(_wrapper).find('.ui-wysiwyg-dd-fntbgcbtn span').css('background-color', $(elm).css('backgroundColor'));
+							$(_wrapper).find('.ui-wysiwyg-fontbgcdropdown .ui-wysiwyg-colorinput').val($(elm).css('backgroundColor'));
+						}
 					}
 				} catch (e){
 					// opera bug
