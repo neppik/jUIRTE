@@ -14,7 +14,7 @@ A really simple (and light) Rich Text Editor (wysiwyg) for Jquery UI
 
 == Example == 
  $(document).ready(function(){ 
-  $("#myEditor").wysiwyg();
+  $("textarea").juirte();
  });
 
 == License ==
@@ -24,4 +24,4 @@ LGPL - use it how you want!
 * Plugins
 * Design options (divs/tables)
 * Force HTML5 code
-* Test on mobiles
+* Test on mobiles (tested OK on android)
