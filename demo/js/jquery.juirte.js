@@ -78,7 +78,7 @@ $.fn.juirte = function(options){
 			}
 
 			// set button status, cross browser required us to bind on load and outside of load
-			$('.'+_id+'-wysiwyg-content').load(function() {
+			$('.'+_id+'-wysiwyg-content').on("load",function() {
 				$('.'+_id+'-wysiwyg-content').contents().find("body").bind('click', function(event) {
 					fnSetButtons(event)
 				});
